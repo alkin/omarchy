@@ -81,7 +81,7 @@ if [ -n "$CHROME_EXEC" ]; then
     if [ ! -d "$CHROME_PROFILES_DIR" ]; then
         CHROME_PROFILES_DIR="$HOME/.config/chromium"
     fi
-    
+
     COMUNITIVE_PROFILE="Default"
     if [ -d "$CHROME_PROFILES_DIR" ]; then
         # Look for a profile that might be Comunitive (check Preferences.json for profile name)
@@ -95,7 +95,7 @@ if [ -n "$CHROME_EXEC" ]; then
             fi
         done
     fi
-    
+
     echo "exec-once = [workspace 1 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$COMUNITIVE_PROFILE\"" >> "$AUTOSTART_CONFIG"
     echo -e "${GREEN}  ✓ Workspace 1: Google Chrome (Comunitive Profile - using '$COMUNITIVE_PROFILE')${NC}"
 else
@@ -140,7 +140,7 @@ if [ -n "$CHROME_EXEC" ]; then
     if [ ! -d "$CHROME_PROFILES_DIR" ]; then
         CHROME_PROFILES_DIR="$HOME/.config/chromium"
     fi
-    
+
     RICARDO_PROFILE="Profile 1"
     if [ -d "$CHROME_PROFILES_DIR" ]; then
         # Look for a profile that might be Ricardo (check Preferences.json for profile name)
@@ -154,7 +154,7 @@ if [ -n "$CHROME_EXEC" ]; then
             fi
         done
     fi
-    
+
     echo "exec-once = [workspace 5 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$RICARDO_PROFILE\"" >> "$AUTOSTART_CONFIG"
     echo -e "${GREEN}  ✓ Workspace 5: Google Chrome (Ricardo Profile - using '$RICARDO_PROFILE')${NC}"
 else
