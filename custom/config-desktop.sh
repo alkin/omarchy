@@ -124,20 +124,23 @@ if [ -n "$TERMINAL_EXEC" ]; then
     # This ensures all three terminals are opened even if Hyprland tries to deduplicate exec-once
     TERMINAL_WRAPPER="$HOME/.local/bin/omarchy-open-three-terminals"
     mkdir -p "$HOME/.local/bin"
-    cat > "$TERMINAL_WRAPPER" << TERMINAL_SCRIPT_EOF
+    cat > "$TERMINAL_WRAPPER" << 'TERMINAL_SCRIPT_EOF'
 #!/bin/bash
 # Wrapper script to open three terminal instances on workspace 3
-TERMINAL_EXEC="$TERMINAL_EXEC"
-uwsm-app -- "\$TERMINAL_EXEC" &
+# Takes terminal executable as first argument
+TERMINAL_EXEC="$1"
+if [ -z "$TERMINAL_EXEC" ]; then
+    TERMINAL_EXEC="xdg-terminal-exec"
+fi
+uwsm-app -- "$TERMINAL_EXEC" &
 sleep 0.3
-uwsm-app -- "\$TERMINAL_EXEC" &
+uwsm-app -- "$TERMINAL_EXEC" &
 sleep 0.3
-uwsm-app -- "\$TERMINAL_EXEC" &
+uwsm-app -- "$TERMINAL_EXEC" &
 TERMINAL_SCRIPT_EOF
     chmod +x "$TERMINAL_WRAPPER"
-    # Use exec instead of exec-once to ensure it runs every time workspace 3 is accessed
-    # But wrap it in a way that only runs once at startup
-    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] bash -c '$TERMINAL_WRAPPER'\n"
+    # Use exec-once with the wrapper script, passing the terminal executable as argument
+    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] $TERMINAL_WRAPPER $TERMINAL_EXEC\n"
 else
     WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
     WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
