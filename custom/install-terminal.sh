@@ -16,12 +16,6 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║        Terminal and Shell Configuration                   ║${NC}"
 echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
 
-# Check if omarchy-pkg-add exists
-if ! command -v omarchy-pkg-add &>/dev/null; then
-    echo -e "${RED}Error: omarchy-pkg-add not found. Make sure Omarchy is properly installed.${NC}"
-    exit 1
-fi
-
 # Install ghostty and set as default terminal (AUR)
 echo -e "${YELLOW}📦 Installing Ghostty terminal...${NC}"
 if command -v omarchy-install-terminal &>/dev/null; then
@@ -40,7 +34,7 @@ echo -e "${GREEN}  ✓ Ghostty installed and set as default terminal${NC}\n"
 
 # Install zsh and plugins
 echo -e "${YELLOW}📦 Installing Zsh and plugins...${NC}"
-omarchy-pkg-add zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
+yay -S --noconfirm --needed zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
 echo -e "${GREEN}  ✓ Zsh and plugins installed${NC}\n"
 
 # Configure zsh

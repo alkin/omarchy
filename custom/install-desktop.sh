@@ -16,12 +16,6 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║        Desktop Packages Installation                      ║${NC}"
 echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
 
-# Check if omarchy-pkg-add exists
-if ! command -v omarchy-pkg-add &>/dev/null; then
-    echo -e "${RED}Error: omarchy-pkg-add not found. Make sure Omarchy is properly installed.${NC}"
-    exit 1
-fi
-
 # Install Google Chrome (AUR)
 echo -e "${YELLOW}🌐 Installing Google Chrome...${NC}"
 yay -S --noconfirm --needed google-chrome
@@ -57,9 +51,9 @@ echo -e "${YELLOW}💾 Installing Ventoy...${NC}"
 yay -S --noconfirm --needed ventoy-bin
 echo -e "${GREEN}  ✓ Ventoy installed${NC}\n"
 
-# Install VeraCrypt (official repo)
+# Install VeraCrypt
 echo -e "${YELLOW}🔒 Installing VeraCrypt...${NC}"
-omarchy-pkg-add veracrypt
+yay -S --noconfirm --needed veracrypt
 echo -e "${GREEN}  ✓ VeraCrypt installed${NC}\n"
 
 # Summary

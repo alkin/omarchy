@@ -16,24 +16,11 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║     Omarchy Development Environment Installation        ║${NC}"
 echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
 
-# Check if omarchy-pkg-add exists
-if ! command -v omarchy-pkg-add &>/dev/null; then
-    echo -e "${RED}Error: omarchy-pkg-add not found. Make sure Omarchy is properly installed.${NC}"
-    exit 1
-fi
-
-# PHP, Composer, Laravel
-echo -e "${YELLOW}📦 Installing PHP, Composer, and Laravel...${NC}"
-omarchy-install-dev-env laravel
-echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
-
-# Node.js ecosystem (mise, node, bun, npm, pnpm)
-echo -e "${YELLOW}📦 Installing Node.js ecosystem...${NC}"
-
 # mise is already installed, but ensure it's available (AUR)
 if ! command -v mise &>/dev/null; then
     yay -S --noconfirm --needed mise
 fi
+
 
 # Install Node.js via mise
 echo -e "${YELLOW}  Installing Node.js via mise...${NC}"
@@ -45,18 +32,31 @@ mise use --global bun@latest 2>/dev/null || echo -e "${YELLOW}  Bun installation
 
 # npm and pnpm packages
 echo -e "${YELLOW}  Installing npm and pnpm...${NC}"
-omarchy-pkg-add npm pnpm
+yay -S --noconfirm --needed npm pnpm
 
 echo -e "${GREEN}  ✓ Node.js ecosystem installed${NC}\n"
 
+# PHP, Composer, Laravel
+echo -e "${YELLOW}📦 Installing PHP, Composer, and Laravel...${NC}"
+omarchy-install-dev-env laravel
+echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
+
+# Node.js ecosystem (mise, node, bun, npm, pnpm)
+echo -e "${YELLOW}📦 Installing Node.js ecosystem...${NC}"
+
 # Cloud CLIs
 echo -e "${YELLOW}☁️  Installing Cloud CLIs...${NC}"
-omarchy-pkg-add azure-cli google-cloud-cli pulumi
+yay -S --noconfirm --needed azure-cli google-cloud-cli pulumi
 echo -e "${GREEN}  ✓ Cloud CLIs installed${NC}\n"
 
 # Kubernetes tools
 echo -e "${YELLOW}☸️  Installing Kubernetes tools...${NC}"
-omarchy-pkg-add kubectl kubectx helm k9s
+yay -S --noconfirm --needed kubectl kubectx helm k9s
+
+if command -v helm &>/dev/null; then
+    helm repo add stable https://kubernetes-charts.storage.googleapis.com/ 2>/dev/null || true
+    helm repo update 2>/dev/null || true
+fi
 echo -e "${GREEN}  ✓ Kubernetes tools installed${NC}\n"
 
 # IDE (AUR)
@@ -66,7 +66,7 @@ echo -e "${GREEN}  ✓ IDE installed${NC}\n"
 
 # System utilities
 echo -e "${YELLOW}🔧 Installing system utilities...${NC}"
-omarchy-pkg-add cpupower dell-command-configure bind jq
+yay -S --noconfirm --needed cpupower dell-command-configure bind jq
 echo -e "${GREEN}  ✓ System utilities installed${NC}\n"
 
 # Summary
