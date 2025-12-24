@@ -132,11 +132,14 @@ TERMINAL_EXEC="$1"
 if [ -z "$TERMINAL_EXEC" ]; then
     TERMINAL_EXEC="xdg-terminal-exec"
 fi
+# Use hyprctl to ensure terminals open on workspace 3
+hyprctl dispatch workspace 3
 uwsm-app -- "$TERMINAL_EXEC" &
-sleep 0.3
+sleep 0.1
 uwsm-app -- "$TERMINAL_EXEC" &
-sleep 0.3
+sleep 0.1
 uwsm-app -- "$TERMINAL_EXEC" &
+hyprctl dispatch workspace 1
 TERMINAL_SCRIPT_EOF
     chmod +x "$TERMINAL_WRAPPER"
     # Use exec-once with the wrapper script, passing the terminal executable as argument
@@ -179,6 +182,26 @@ if [ -n "$CURSOR_EXEC" ]; then
     # Cursor can have different class names, so we match multiple variations
     # This ensures Cursor always opens on workspace 2, even if launched manually
     echo "windowrule = workspace 2, class:^(cursor|Cursor|com\.todesktop\.*)$" >> "$AUTOSTART_CONFIG"
+fi
+if [ -n "$TERMINAL_EXEC" ]; then
+    # Ensure terminals opened by the wrapper script go to workspace 3
+    if [ "$TERMINAL_EXEC" = "xdg-terminal-exec" ]; then
+        # xdg-terminal-exec can launch different terminals, so match common ones
+        echo "windowrule = workspace 3, class:^(ghostty|Alacritty|kitty|foot|wezterm)$" >> "$AUTOSTART_CONFIG"
+    else
+        # Match the specific terminal executable
+        TERMINAL_CLASS=""
+        case "$TERMINAL_EXEC" in
+            ghostty) TERMINAL_CLASS="ghostty" ;;
+            alacritty) TERMINAL_CLASS="Alacritty" ;;
+            kitty) TERMINAL_CLASS="kitty" ;;
+            foot) TERMINAL_CLASS="foot" ;;
+            wezterm) TERMINAL_CLASS="wezterm" ;;
+        esac
+        if [ -n "$TERMINAL_CLASS" ]; then
+            echo "windowrule = workspace 3, class:^($TERMINAL_CLASS)$" >> "$AUTOSTART_CONFIG"
+        fi
+    fi
 fi
 
 # Display configured workspaces
