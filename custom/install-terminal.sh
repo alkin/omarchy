@@ -12,39 +12,17 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║        Terminal and Shell Configuration                   ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}\n"
 
 # Install ghostty and set as default terminal (AUR)
 echo -e "${YELLOW}📦 Installing Ghostty terminal...${NC}"
-if command -v omarchy-install-terminal &>/dev/null; then
-    omarchy-install-terminal ghostty
-else
-    yay -S --noconfirm --needed ghostty
-    # Set ghostty as default terminal
-    mkdir -p ~/.config
-    cat > ~/.config/xdg-terminals.list << EOF
-# Terminal emulator preference order for xdg-terminal-exec
-# The first found and valid terminal will be used
-com.mitchellh.ghostty.desktop
-EOF
-fi
+omarchy-install-terminal ghostty
 echo -e "${GREEN}  ✓ Ghostty installed and set as default terminal${NC}\n"
 
 # Install zsh and plugins
 echo -e "${YELLOW}📦 Installing Zsh and plugins...${NC}"
-yay -S --noconfirm --needed zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
+yay -S --noconfirm --needed zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
 echo -e "${GREEN}  ✓ Zsh and plugins installed${NC}\n"
-
-# Install zoxide if not already installed
-echo -e "${YELLOW}📦 Installing zoxide...${NC}"
-if ! command -v zoxide &>/dev/null; then
-    yay -S --noconfirm --needed zoxide
-    echo -e "${GREEN}  ✓ Zoxide installed${NC}\n"
-else
-    echo -e "${GREEN}  ✓ Zoxide already installed${NC}\n"
-fi
 
 # Configure zsh
 echo -e "${YELLOW}⚙️  Configuring Zsh...${NC}"
@@ -107,89 +85,6 @@ if command -v fzf &>/dev/null; then
     fi
 fi
 
-# Initialize zoxide first (needed by Omarchy aliases)
-if ! grep -qE "# Initialize zoxide" "$ZSH_RC" 2>/dev/null; then
-    cat >> "$ZSH_RC" << 'ZOXIDE_EOF'
-
-# Initialize zoxide (needed before Omarchy aliases)
-if command -v zoxide &> /dev/null; then
-  eval "$(zoxide init zsh)"
-fi
-ZOXIDE_EOF
-    echo -e "${GREEN}  ✓ Zoxide initialization added to .zshrc${NC}"
-fi
-
-# Load Omarchy aliases and functions
-OMARCHY_BASH_DIR="$HOME/.local/share/omarchy/default/bash"
-if [ -d "$OMARCHY_BASH_DIR" ]; then
-    if ! grep -qE "# Omarchy aliases and functions" "$ZSH_RC" 2>/dev/null; then
-        cat >> "$ZSH_RC" << 'OMARCHY_EOF'
-
-# Omarchy aliases and functions
-OMARCHY_BASH_DIR="$HOME/.local/share/omarchy/default/bash"
-if [ -d "$OMARCHY_BASH_DIR" ]; then
-  # Source aliases (most bash aliases work in zsh)
-  if [ -f "$OMARCHY_BASH_DIR/aliases" ]; then
-    source "$OMARCHY_BASH_DIR/aliases"
-  fi
-
-  # Source functions
-  if [ -f "$OMARCHY_BASH_DIR/functions" ]; then
-    source "$OMARCHY_BASH_DIR/functions"
-  fi
-
-  # Source environment variables
-  if [ -f "$OMARCHY_BASH_DIR/envs" ]; then
-    source "$OMARCHY_BASH_DIR/envs"
-  fi
-fi
-OMARCHY_EOF
-        echo -e "${GREEN}  ✓ Omarchy aliases and functions added to .zshrc${NC}"
-    else
-        echo -e "${YELLOW}  ⚠ Omarchy aliases section already exists in .zshrc${NC}"
-    fi
-else
-    echo -e "${YELLOW}  ⚠ Omarchy bash directory not found, skipping aliases${NC}"
-fi
-
-# Add initialization section for other tools (mise, starship)
-# Check if initialization section already exists
-if ! grep -qE "# Tool initializations" "$ZSH_RC" 2>/dev/null; then
-    cat >> "$ZSH_RC" << 'TOOLS_EOF'
-
-# Tool initializations
-if command -v mise &> /dev/null; then
-  eval "$(mise activate zsh)"
-fi
-
-if command -v starship &> /dev/null; then
-  eval "$(starship init zsh)"
-fi
-TOOLS_EOF
-    echo -e "${GREEN}  ✓ Tool initializations added to .zshrc${NC}"
-else
-    echo -e "${YELLOW}  ⚠ Tool initialization section already exists in .zshrc${NC}"
-fi
-
-echo -e "${GREEN}  ✓ Zsh configured with plugins${NC}\n"
-
-# Set zsh as default shell
-echo -e "${YELLOW}🔧 Setting Zsh as default shell...${NC}"
-ZSH_PATH=$(which zsh)
-if [ -n "$ZSH_PATH" ]; then
-    if [ "$SHELL" != "$ZSH_PATH" ]; then
-        echo -e "${YELLOW}  Changing default shell to zsh (requires password)...${NC}"
-        chsh -s "$ZSH_PATH"
-        echo -e "${GREEN}  ✓ Zsh set as default shell${NC}"
-        echo -e "${YELLOW}  Note: You may need to log out and back in for this to take effect${NC}"
-    else
-        echo -e "${GREEN}  ✓ Zsh is already the default shell${NC}"
-    fi
-else
-    echo -e "${RED}  ✗ Could not find zsh binary${NC}"
-fi
-echo ""
-
 # Remove omarchy starship config and use default
 echo -e "${YELLOW}🎨 Configuring Starship...${NC}"
 STARSHIP_CONFIG="$HOME/.config/starship.toml"
@@ -210,37 +105,32 @@ echo ""
 # Add aliases if they don't exist
 echo -e "${YELLOW}📝 Adding aliases...${NC}"
 
-# Check if alias already exists in .zshrc
-alias_exists() {
+# Function to add alias if it doesn't exist
+add_alias_if_missing() {
     local alias_name="$1"
+    local alias_value="$2"
+    local alias_line="alias $alias_name=\"$alias_value\""
+
     # Check for various alias formats: alias k=, alias k =, alias k=", etc.
-    grep -qE "^alias $alias_name[= ]" "$ZSH_RC" 2>/dev/null
+    if ! grep -qE "^alias $alias_name[= ]" "$ZSH_RC" 2>/dev/null; then
+        echo "$alias_line" >> "$ZSH_RC"
+        echo -e "${GREEN}  ✓ Added alias: $alias_name=$alias_value${NC}"
+        return 0
+    else
+        echo -e "${YELLOW}  ⚠ Alias $alias_name already exists, skipping${NC}"
+        return 1
+    fi
 }
 
 # Add k=kubectl alias
-if ! alias_exists "k"; then
-    echo 'alias k="kubectl"' >> "$ZSH_RC"
-    echo -e "${GREEN}  ✓ Added alias: k=kubectl${NC}"
-else
-    echo -e "${YELLOW}  ⚠ Alias k already exists, skipping${NC}"
-fi
+add_alias_if_missing "k" "kubectl"
 
 # Add sail alias
-if ! alias_exists "sail"; then
-    echo 'alias sail="vendor/bin/sail"' >> "$ZSH_RC"
-    echo -e "${GREEN}  ✓ Added alias: sail=vendor/bin/sail${NC}"
-else
-    echo -e "${YELLOW}  ⚠ Alias sail already exists, skipping${NC}"
-fi
+add_alias_if_missing "sail" "vendor/bin/sail"
 
 echo ""
 
-# Summary
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║              Configuration Complete!                      ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
-
-echo -e "${GREEN}Configuration summary:${NC}"
+echo -e "${GREEN}Configuration complete:${NC}"
 echo -e "  • Ghostty installed and set as default terminal"
 echo -e "  • Zsh configured with:"
 echo -e "    - Auto-completion (zsh-completions)"

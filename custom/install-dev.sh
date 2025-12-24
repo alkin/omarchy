@@ -12,9 +12,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     Omarchy Development Environment Installation        ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+echo -e "${BLUE}Installing Development Environment...${NC}\n"
 
 # mise is already installed, but ensure it's available (AUR)
 if ! command -v mise &>/dev/null; then
@@ -39,11 +37,11 @@ yay -S --noconfirm --needed npm pnpm
 echo -e "${GREEN}  ✓ Node.js ecosystem installed${NC}\n"
 
 # PHP, Composer, Laravel
-echo -e "${YELLOW}📦 Installing PHP, Composer, and Laravel...${NC}"
+echo -e "${YELLOW}📦 Installing PHP and Composer...${NC}"
 # Update pacman database to ensure keys are up to date
 sudo pacman -Sy 2>/dev/null || true
-omarchy-install-dev-env laravel
-echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
+omarchy-install-dev-env php
+echo -e "${GREEN}  ✓ PHP and Composer installed${NC}\n"
 
 # Cloud CLIs
 echo -e "${YELLOW}☁️  Installing Cloud CLIs...${NC}"
@@ -65,22 +63,11 @@ echo -e "${YELLOW}💻 Installing IDE...${NC}"
 yay -S --noconfirm --needed cursor-bin
 echo -e "${GREEN}  ✓ IDE installed${NC}\n"
 
-# System utilities
-echo -e "${YELLOW}🔧 Installing system utilities...${NC}"
-yay -S --noconfirm --needed cpupower dell-command-configure bind jq
-echo -e "${GREEN}  ✓ System utilities installed${NC}\n"
-
-# Summary
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║              Installation Complete!                      ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
-
-echo -e "${GREEN}Installed packages:${NC}"
-echo -e "  • PHP, Composer, Laravel"
+echo -e "${GREEN}Installation complete:${NC}"
+echo -e "  • PHP, Composer"
 echo -e "  • mise, Node.js, Bun, npm, pnpm"
 echo -e "  • Azure CLI, Google Cloud CLI, Pulumi"
 echo -e "  • kubectl, kubectx, helm, k9s"
 echo -e "  • Cursor IDE"
-echo -e "  • cpupower, dell-command-configure (cctk), bind, jq"
 echo -e "\n${YELLOW}Note: You may need to restart your shell or run 'source ~/.zshrc' (or 'source ~/.bashrc' if using bash) to use some tools.${NC}\n"
 

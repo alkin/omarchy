@@ -12,42 +12,51 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Get script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # Run yay update
 yay -Sy
 
-# Run install-terminal.sh FIRST
-echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
-bash "$SCRIPT_DIR/install-terminal.sh"
-echo
-
-# Check if shell is zsh, if not exec zsh
+# Check if current shell is zsh, if not install it
 CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "unknown")
 if [ "$CURRENT_SHELL" != "zsh" ]; then
-    echo -e "${YELLOW}Switching to zsh...${NC}"
-    exec zsh
-fi
+    echo -e "${BLUE}Installing zsh...${NC}"
+    yay -S --noconfirm --needed omarchy-zsh
+    omarchy-setup-zsh
+    echo -e "${GREEN}zsh installed and configured${NC}"
 
-# Run install-dev.sh (only if shell is zsh)
-echo -e "${BLUE}Installing Development Environment...${NC}"
-bash "$SCRIPT_DIR/install-dev.sh"
-echo
+    echo -e "${BLUE}Switching to zsh...${NC}"
+    exec zsh "$0"
+    exit 0
+fi
 
 # Run install-desktop.sh
 echo -e "${BLUE}Installing Desktop Packages...${NC}"
-bash "$SCRIPT_DIR/install-desktop.sh"
+bash ./install-desktop.sh
 echo
 
-# Run config-desktop.sh
-echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
-bash "$SCRIPT_DIR/config-desktop.sh"
+# Run install-dev.sh
+echo -e "${BLUE}Installing Development Environment...${NC}"
+bash ./install-dev.sh
 echo
+
+# Run install-utils.sh
+echo -e "${BLUE}Installing System Utilities...${NC}"
+bash ./install-utils.sh
+echo
+
+# Run install-terminal.sh
+echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
+bash ./install-terminal.sh
+echo
+
+
+# Run config-desktop.sh
+# echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
+# bash ./config-desktop.sh
+# echo
 
 # Run uninstall.sh
 echo -e "${BLUE}Uninstalling Packages & Applications...${NC}"
-bash "$SCRIPT_DIR/uninstall.sh"
+bash ./uninstall.sh
 echo
 
 # Final summary

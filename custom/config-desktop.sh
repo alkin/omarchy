@@ -12,9 +12,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║        Desktop Workspace Configuration                   ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+echo -e "${BLUE}Configuring Desktop Workspaces...${NC}\n"
 
 # Check if hyprland config directory exists
 HYPR_CONFIG="$HOME/.config/hypr"
@@ -233,10 +231,7 @@ fi
 
 echo ""
 
-# Summary
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║              Configuration Complete!                      ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+echo -e "${GREEN}Configuration complete:${NC}"
 
 echo -e "${GREEN}Workspace configuration:${NC}"
 echo -e "  • Workspace 1: Google Chrome (Comunitive Profile)"

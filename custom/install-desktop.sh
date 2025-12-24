@@ -12,9 +12,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║        Desktop Packages Installation                      ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+echo -e "${BLUE}Installing Desktop Packages...${NC}\n"
 
 # Install Google Chrome (AUR)
 echo -e "${YELLOW}🌐 Installing Google Chrome...${NC}"
@@ -40,6 +38,10 @@ else
     echo -e "${YELLOW}  ⚠ Google Chrome executable not found${NC}"
 fi
 echo ""
+
+# Running Chrome so the user can login and create the profiles
+echo -e "${YELLOW}🌐 Running Chrome to create profiles...${NC}"
+google-chrome-stable &
 
 # Install DisplayLink drivers (AUR)
 echo -e "${YELLOW}🖥️  Installing DisplayLink drivers...${NC}"
@@ -68,12 +70,7 @@ echo -e "${YELLOW}🔒 Installing VeraCrypt...${NC}"
 yay -S --noconfirm --needed veracrypt
 echo -e "${GREEN}  ✓ VeraCrypt installed${NC}\n"
 
-# Summary
-echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║              Installation Complete!                      ║${NC}"
-echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
-
-echo -e "${GREEN}Installed packages:${NC}"
+echo -e "${GREEN}Installation complete:${NC}"
 echo -e "  • Google Chrome (set as default browser)"
 echo -e "  • DisplayLink drivers (evdi-dkms, displaylink)"
 echo -e "  • Ventoy"
