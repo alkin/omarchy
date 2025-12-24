@@ -21,6 +21,8 @@ if ! command -v mise &>/dev/null; then
     yay -S --noconfirm --needed mise
 fi
 
+# Node.js ecosystem (mise, node, bun, npm, pnpm)
+echo -e "${YELLOW}📦 Installing Node.js ecosystem...${NC}"
 
 # Install Node.js via mise
 echo -e "${YELLOW}  Installing Node.js via mise...${NC}"
@@ -40,9 +42,6 @@ echo -e "${GREEN}  ✓ Node.js ecosystem installed${NC}\n"
 echo -e "${YELLOW}📦 Installing PHP, Composer, and Laravel...${NC}"
 omarchy-install-dev-env laravel
 echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
-
-# Node.js ecosystem (mise, node, bun, npm, pnpm)
-echo -e "${YELLOW}📦 Installing Node.js ecosystem...${NC}"
 
 # Cloud CLIs
 echo -e "${YELLOW}☁️  Installing Cloud CLIs...${NC}"

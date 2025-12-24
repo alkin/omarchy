@@ -30,24 +30,7 @@ EXIT_CODES=0
 # Run yay update
 yay -Sy
 
-# Run install-dev.sh
-if [ -f "$SCRIPT_DIR/install-dev.sh" ]; then
-    echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║        Installing Development Environment...              ║${NC}"
-    echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
-    bash "$SCRIPT_DIR/install-dev.sh"
-    EXIT_CODE=$?
-    EXIT_CODES=$((EXIT_CODES + EXIT_CODE))
-    if [ $EXIT_CODE -eq 0 ]; then
-        echo -e "\n${GREEN}✓ Development tools installation completed successfully!${NC}\n"
-    else
-        echo -e "\n${RED}✗ Development tools installation encountered errors.${NC}\n"
-    fi
-else
-    echo -e "${YELLOW}⚠ install-dev.sh not found, skipping...${NC}\n"
-fi
-
-# Run install-terminal.sh
+# Run install-terminal.sh FIRST
 if [ -f "$SCRIPT_DIR/install-terminal.sh" ]; then
     echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║        Installing Terminal & Shell Configuration...      ║${NC}"
@@ -62,6 +45,37 @@ if [ -f "$SCRIPT_DIR/install-terminal.sh" ]; then
     fi
 else
     echo -e "${YELLOW}⚠ install-terminal.sh not found, skipping...${NC}\n"
+fi
+
+# Check if shell is zsh before running install-dev.sh
+CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "unknown")
+if [ "$CURRENT_SHELL" != "zsh" ]; then
+    echo -e "${RED}╔═══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║                    Shell Check Failed                     ║${NC}"
+    echo -e "${RED}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+    echo -e "${YELLOW}Current shell: ${CURRENT_SHELL}${NC}"
+    echo -e "${RED}Error: Development environment installation requires zsh.${NC}\n"
+    echo -e "${YELLOW}Please run the following command and then rerun this script:${NC}"
+    echo -e "${GREEN}  exec zsh${NC}\n"
+    echo -e "${YELLOW}Or log out and log back in to switch to zsh.${NC}\n"
+    exit 1
+fi
+
+# Run install-dev.sh (only if shell is zsh)
+if [ -f "$SCRIPT_DIR/install-dev.sh" ]; then
+    echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║        Installing Development Environment...              ║${NC}"
+    echo -e "${BLUE}╚═══════════════════════════════════════════════════════════╝${NC}\n"
+    bash "$SCRIPT_DIR/install-dev.sh"
+    EXIT_CODE=$?
+    EXIT_CODES=$((EXIT_CODES + EXIT_CODE))
+    if [ $EXIT_CODE -eq 0 ]; then
+        echo -e "\n${GREEN}✓ Development tools installation completed successfully!${NC}\n"
+    else
+        echo -e "\n${RED}✗ Development tools installation encountered errors.${NC}\n"
+    fi
+else
+    echo -e "${YELLOW}⚠ install-dev.sh not found, skipping...${NC}\n"
 fi
 
 # Run install-desktop.sh
