@@ -19,13 +19,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 yay -Sy
 
 # Run install-terminal.sh FIRST
-if [ -f "$SCRIPT_DIR/install-terminal.sh" ]; then
-    echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
-    bash "$SCRIPT_DIR/install-terminal.sh"
-    echo
-else
-    echo -e "${YELLOW}⚠ install-terminal.sh not found, skipping...${NC}\n"
-fi
+echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
+bash "$SCRIPT_DIR/install-terminal.sh"
+echo
 
 # Check if shell is zsh, if not exec zsh
 CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "unknown")
@@ -35,40 +31,24 @@ if [ "$CURRENT_SHELL" != "zsh" ]; then
 fi
 
 # Run install-dev.sh (only if shell is zsh)
-if [ -f "$SCRIPT_DIR/install-dev.sh" ]; then
-    echo -e "${BLUE}Installing Development Environment...${NC}"
-    bash "$SCRIPT_DIR/install-dev.sh"
-    echo
-else
-    echo -e "${YELLOW}⚠ install-dev.sh not found, skipping...${NC}\n"
-fi
+echo -e "${BLUE}Installing Development Environment...${NC}"
+bash "$SCRIPT_DIR/install-dev.sh"
+echo
 
 # Run install-desktop.sh
-if [ -f "$SCRIPT_DIR/install-desktop.sh" ]; then
-    echo -e "${BLUE}Installing Desktop Packages...${NC}"
-    bash "$SCRIPT_DIR/install-desktop.sh"
-    echo
-else
-    echo -e "${YELLOW}⚠ install-desktop.sh not found, skipping...${NC}\n"
-fi
+echo -e "${BLUE}Installing Desktop Packages...${NC}"
+bash "$SCRIPT_DIR/install-desktop.sh"
+echo
 
 # Run config-desktop.sh
-if [ -f "$SCRIPT_DIR/config-desktop.sh" ]; then
-    echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
-    bash "$SCRIPT_DIR/config-desktop.sh"
-    echo
-else
-    echo -e "${YELLOW}⚠ config-desktop.sh not found, skipping...${NC}\n"
-fi
+echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
+bash "$SCRIPT_DIR/config-desktop.sh"
+echo
 
 # Run uninstall.sh
-if [ -f "$SCRIPT_DIR/uninstall.sh" ]; then
-    echo -e "${BLUE}Uninstalling Packages & Applications...${NC}"
-    bash "$SCRIPT_DIR/uninstall.sh"
-    echo
-else
-    echo -e "${YELLOW}⚠ uninstall.sh not found, skipping...${NC}\n"
-fi
+echo -e "${BLUE}Uninstalling Packages & Applications...${NC}"
+bash "$SCRIPT_DIR/uninstall.sh"
+echo
 
 # Final summary
 echo -e "${BLUE}All operations complete${NC}\n"
