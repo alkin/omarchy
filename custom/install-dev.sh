@@ -40,6 +40,8 @@ echo -e "${GREEN}  ✓ Node.js ecosystem installed${NC}\n"
 
 # PHP, Composer, Laravel
 echo -e "${YELLOW}📦 Installing PHP, Composer, and Laravel...${NC}"
+# Update pacman database to ensure keys are up to date
+sudo pacman -Sy 2>/dev/null || true
 omarchy-install-dev-env laravel
 echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
 

@@ -65,100 +65,118 @@ fi
 
 echo -e "${YELLOW}⚙️  Configuring workspaces...${NC}\n"
 
-# Create or update autostart.conf
-cat > "$AUTOSTART_CONFIG" << 'AUTOSTART_EOF'
-# Extra autostart processes
-# exec-once = uwsm-app -- my-service
+# Remove any existing workspace configuration to avoid duplicates
+if [ -f "$AUTOSTART_CONFIG" ]; then
+    # Remove lines from "# Custom workspace configuration" to end of file
+    if grep -q "# Custom workspace configuration" "$AUTOSTART_CONFIG" 2>/dev/null; then
+        sed -i '/^# Custom workspace configuration/,$d' "$AUTOSTART_CONFIG"
+        # Remove trailing empty lines
+        sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$AUTOSTART_CONFIG"
+    fi
+fi
 
-# Custom workspace configuration
-# Workspace 1: Google Chrome (Comunitive Profile)
-AUTOSTART_EOF
-
-# Add workspace 1: Google Chrome (Comunitive Profile)
+# Detect Chrome profiles
+COMUNITIVE_PROFILE="Default"
+RICARDO_PROFILE="Profile 1"
 if [ -n "$CHROME_EXEC" ]; then
-    # Try to find the Comunitive profile directory
     CHROME_PROFILES_DIR="$HOME/.config/google-chrome"
     if [ ! -d "$CHROME_PROFILES_DIR" ]; then
         CHROME_PROFILES_DIR="$HOME/.config/chromium"
     fi
 
-    COMUNITIVE_PROFILE="Default"
     if [ -d "$CHROME_PROFILES_DIR" ]; then
-        # Look for a profile that might be Comunitive (check Preferences.json for profile name)
         for profile_dir in "$CHROME_PROFILES_DIR"/Profile* "$CHROME_PROFILES_DIR"/Default; do
             if [ -f "$profile_dir/Preferences" ]; then
                 profile_name=$(grep -o '"name":"[^"]*"' "$profile_dir/Preferences" 2>/dev/null | head -1 | cut -d'"' -f4)
                 if echo "$profile_name" | grep -qi "comunitive"; then
                     COMUNITIVE_PROFILE=$(basename "$profile_dir")
-                    break
+                fi
+                if echo "$profile_name" | grep -qi "ricardo"; then
+                    RICARDO_PROFILE=$(basename "$profile_dir")
                 fi
             fi
         done
     fi
+fi
 
-    echo "exec-once = [workspace 1 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$COMUNITIVE_PROFILE\"" >> "$AUTOSTART_CONFIG"
+# Build complete workspace configuration
+WORKSPACE_CONFIG=""
+WORKSPACE_CONFIG+="# Custom workspace configuration\n"
+WORKSPACE_CONFIG+="# Workspace 1: Google Chrome (Comunitive Profile)\n"
+if [ -n "$CHROME_EXEC" ]; then
+    WORKSPACE_CONFIG+="exec-once = [workspace 1 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$COMUNITIVE_PROFILE\"\n"
+else
+    WORKSPACE_CONFIG+="# exec-once = [workspace 1 silent] uwsm-app -- google-chrome-stable --profile-directory=\"Default\"\n"
+fi
+
+WORKSPACE_CONFIG+="\n"
+WORKSPACE_CONFIG+="# Workspace 2: Cursor\n"
+if [ -n "$CURSOR_EXEC" ]; then
+    WORKSPACE_CONFIG+="exec-once = [workspace 2 silent] uwsm-app -- $CURSOR_EXEC\n"
+else
+    WORKSPACE_CONFIG+="# exec-once = [workspace 2 silent] uwsm-app -- cursor\n"
+fi
+
+WORKSPACE_CONFIG+="\n"
+WORKSPACE_CONFIG+="# Workspace 3: Three terminal instances\n"
+if [ -n "$TERMINAL_EXEC" ]; then
+    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
+    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
+    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
+else
+    WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
+    WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
+    WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
+fi
+
+WORKSPACE_CONFIG+="\n"
+WORKSPACE_CONFIG+="# Workspace 4: Empty\n"
+
+WORKSPACE_CONFIG+="\n"
+WORKSPACE_CONFIG+="# Workspace 5: Google Chrome (Ricardo Profile)\n"
+if [ -n "$CHROME_EXEC" ]; then
+    WORKSPACE_CONFIG+="exec-once = [workspace 5 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$RICARDO_PROFILE\"\n"
+else
+    WORKSPACE_CONFIG+="# exec-once = [workspace 5 silent] uwsm-app -- google-chrome-stable --profile-directory=\"Profile 1\"\n"
+fi
+
+# Append workspace configuration to autostart.conf
+# Ensure file exists with header if it doesn't exist
+if [ ! -f "$AUTOSTART_CONFIG" ]; then
+    cat > "$AUTOSTART_CONFIG" << 'AUTOSTART_EOF'
+# Extra autostart processes
+# exec-once = uwsm-app -- my-service
+
+AUTOSTART_EOF
+fi
+
+# Add workspace configuration
+echo -e "$WORKSPACE_CONFIG" >> "$AUTOSTART_CONFIG"
+
+# Display configured workspaces
+if [ -n "$CHROME_EXEC" ]; then
     echo -e "${GREEN}  ✓ Workspace 1: Google Chrome (Comunitive Profile - using '$COMUNITIVE_PROFILE')${NC}"
 else
-    echo "# exec-once = [workspace 1 silent] uwsm-app -- google-chrome-stable --profile-directory=\"Default\"" >> "$AUTOSTART_CONFIG"
     echo -e "${YELLOW}  ⚠ Workspace 1: Skipped (Chrome not found)${NC}"
 fi
 
-# Add workspace 2: Cursor
-echo "" >> "$AUTOSTART_CONFIG"
 if [ -n "$CURSOR_EXEC" ]; then
-    echo "exec-once = [workspace 2 silent] uwsm-app -- $CURSOR_EXEC" >> "$AUTOSTART_CONFIG"
     echo -e "${GREEN}  ✓ Workspace 2: Cursor${NC}"
 else
-    echo "# exec-once = [workspace 2 silent] uwsm-app -- cursor" >> "$AUTOSTART_CONFIG"
     echo -e "${YELLOW}  ⚠ Workspace 2: Skipped (Cursor not found)${NC}"
 fi
 
-# Add workspace 3: Three terminal instances
-echo "" >> "$AUTOSTART_CONFIG"
 if [ -n "$TERMINAL_EXEC" ]; then
-    echo "exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC" >> "$AUTOSTART_CONFIG"
-    echo "exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC" >> "$AUTOSTART_CONFIG"
-    echo "exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC" >> "$AUTOSTART_CONFIG"
     echo -e "${GREEN}  ✓ Workspace 3: Three terminal instances${NC}"
 else
-    echo "# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec" >> "$AUTOSTART_CONFIG"
-    echo "# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec" >> "$AUTOSTART_CONFIG"
-    echo "# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec" >> "$AUTOSTART_CONFIG"
     echo -e "${YELLOW}  ⚠ Workspace 3: Skipped (Terminal not found)${NC}"
 fi
 
-# Add workspace 4: Empty
-echo "" >> "$AUTOSTART_CONFIG"
-echo "# Workspace 4: Empty" >> "$AUTOSTART_CONFIG"
 echo -e "${GREEN}  ✓ Workspace 4: Empty${NC}"
 
-# Add workspace 5: Google Chrome (Ricardo Profile)
-echo "" >> "$AUTOSTART_CONFIG"
 if [ -n "$CHROME_EXEC" ]; then
-    # Try to find the Ricardo profile directory
-    CHROME_PROFILES_DIR="$HOME/.config/google-chrome"
-    if [ ! -d "$CHROME_PROFILES_DIR" ]; then
-        CHROME_PROFILES_DIR="$HOME/.config/chromium"
-    fi
-
-    RICARDO_PROFILE="Profile 1"
-    if [ -d "$CHROME_PROFILES_DIR" ]; then
-        # Look for a profile that might be Ricardo (check Preferences.json for profile name)
-        for profile_dir in "$CHROME_PROFILES_DIR"/Profile* "$CHROME_PROFILES_DIR"/Default; do
-            if [ -f "$profile_dir/Preferences" ]; then
-                profile_name=$(grep -o '"name":"[^"]*"' "$profile_dir/Preferences" 2>/dev/null | head -1 | cut -d'"' -f4)
-                if echo "$profile_name" | grep -qi "ricardo"; then
-                    RICARDO_PROFILE=$(basename "$profile_dir")
-                    break
-                fi
-            fi
-        done
-    fi
-
-    echo "exec-once = [workspace 5 silent] uwsm-app -- $CHROME_EXEC --profile-directory=\"$RICARDO_PROFILE\"" >> "$AUTOSTART_CONFIG"
     echo -e "${GREEN}  ✓ Workspace 5: Google Chrome (Ricardo Profile - using '$RICARDO_PROFILE')${NC}"
 else
-    echo "# exec-once = [workspace 5 silent] uwsm-app -- google-chrome-stable --profile-directory=\"Profile 1\"" >> "$AUTOSTART_CONFIG"
     echo -e "${YELLOW}  ⚠ Workspace 5: Skipped (Chrome not found)${NC}"
 fi
 

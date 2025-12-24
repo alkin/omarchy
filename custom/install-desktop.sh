@@ -43,6 +43,18 @@ echo ""
 
 # Install DisplayLink drivers (AUR)
 echo -e "${YELLOW}🖥️  Installing DisplayLink drivers...${NC}"
+# Detect kernel and install appropriate headers for DKMS
+KERNEL_HEADERS="linux-headers" # Default
+if pacman -Q linux-zen &>/dev/null; then
+    KERNEL_HEADERS="linux-zen-headers"
+elif pacman -Q linux-lts &>/dev/null; then
+    KERNEL_HEADERS="linux-lts-headers"
+elif pacman -Q linux-hardened &>/dev/null; then
+    KERNEL_HEADERS="linux-hardened-headers"
+fi
+
+# Install kernel headers and dkms if not already installed
+sudo pacman -S --noconfirm --needed dkms "$KERNEL_HEADERS" 2>/dev/null || true
 yay -S --noconfirm --needed evdi-dkms displaylink
 echo -e "${GREEN}  ✓ DisplayLink drivers installed${NC}\n"
 
