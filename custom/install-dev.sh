@@ -81,5 +81,5 @@ echo -e "  • Azure CLI, Google Cloud CLI, Pulumi"
 echo -e "  • kubectl, kubectx, helm, k9s"
 echo -e "  • Cursor IDE"
 echo -e "  • cpupower, dell-command-configure (cctk), bind, jq"
-echo -e "\n${YELLOW}Note: You may need to restart your shell or run 'source ~/.bashrc' to use some tools.${NC}\n"
+echo -e "\n${YELLOW}Note: You may need to restart your shell or run 'source ~/.zshrc' (or 'source ~/.bashrc' if using bash) to use some tools.${NC}\n"
 

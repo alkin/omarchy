@@ -37,6 +37,15 @@ echo -e "${YELLOW}📦 Installing Zsh and plugins...${NC}"
 yay -S --noconfirm --needed zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
 echo -e "${GREEN}  ✓ Zsh and plugins installed${NC}\n"
 
+# Install zoxide if not already installed
+echo -e "${YELLOW}📦 Installing zoxide...${NC}"
+if ! command -v zoxide &>/dev/null; then
+    yay -S --noconfirm --needed zoxide
+    echo -e "${GREEN}  ✓ Zoxide installed${NC}\n"
+else
+    echo -e "${GREEN}  ✓ Zoxide already installed${NC}\n"
+fi
+
 # Configure zsh
 echo -e "${YELLOW}⚙️  Configuring Zsh...${NC}"
 
@@ -52,10 +61,21 @@ fi
 add_config_if_missing() {
     local config_line="$1"
     local config_file="$2"
+    local pattern="$3"
 
-    if ! grep -Fxq "$config_line" "$config_file" 2>/dev/null; then
-        echo "$config_line" >> "$config_file"
+    # If pattern is provided, use it for checking, otherwise use exact line match
+    if [ -n "$pattern" ]; then
+        if ! grep -qE "$pattern" "$config_file" 2>/dev/null; then
+            echo "$config_line" >> "$config_file"
+            return 0
+        fi
+    else
+        if ! grep -Fxq "$config_line" "$config_file" 2>/dev/null; then
+            echo "$config_line" >> "$config_file"
+            return 0
+        fi
     fi
+    return 1
 }
 
 # Source zsh plugins
@@ -87,19 +107,27 @@ if command -v fzf &>/dev/null; then
     fi
 fi
 
-# Initialize mise if available
-if command -v mise &>/dev/null; then
-    add_config_if_missing 'eval "$(mise activate zsh)"' "$ZSH_RC"
+# Add initialization section for tools (mise, zoxide, starship)
+# Check if initialization section already exists
+if ! grep -qE "# Tool initializations" "$ZSH_RC" 2>/dev/null; then
+    cat >> "$ZSH_RC" << 'TOOLS_EOF'
+
+# Tool initializations
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
-# Initialize zoxide if available
-if command -v zoxide &>/dev/null; then
-    add_config_if_missing 'eval "$(zoxide init zsh)"' "$ZSH_RC"
+if command -v starship &> /dev/null; then
+  eval "$(starship init zsh)"
 fi
 
-# Initialize starship (default config, omarchy config will be removed)
-if command -v starship &>/dev/null; then
-    add_config_if_missing 'eval "$(starship init zsh)"' "$ZSH_RC"
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+TOOLS_EOF
+    echo -e "${GREEN}  ✓ Tool initializations added to .zshrc${NC}"
+else
+    echo -e "${YELLOW}  ⚠ Tool initialization section already exists in .zshrc${NC}"
 fi
 
 echo -e "${GREEN}  ✓ Zsh configured with plugins${NC}\n"
@@ -186,6 +214,7 @@ echo -e "    - Auto-completion (zsh-completions)"
 echo -e "    - Auto-suggestions (zsh-autosuggestions)"
 echo -e "    - Syntax highlighting (zsh-syntax-highlighting)"
 echo -e "    - Fuzzy history search (fzf + history-substring-search)"
+echo -e "    - Zoxide for smart directory navigation"
 echo -e "  • Zsh set as default shell"
 echo -e "  • Starship using default configuration"
 echo -e "  • Aliases added: k=kubectl, g=git, sail=vendor/bin/sail"
