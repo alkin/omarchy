@@ -16,7 +16,8 @@ NC='\033[0m' # No Color
 yay -Sy
 
 # Check if current shell is zsh, if not install it
-CURRENT_SHELL=$(basename "$SHELL" 2>/dev/null || echo "unknown")
+# Use ps to get the actual running shell, not $SHELL which is the default shell
+CURRENT_SHELL=$(ps -p $$ -o comm= 2>/dev/null | xargs basename 2>/dev/null || echo "unknown")
 if [ "$CURRENT_SHELL" != "zsh" ]; then
     echo -e "${BLUE}Installing zsh...${NC}"
     yay -S --noconfirm --needed omarchy-zsh
