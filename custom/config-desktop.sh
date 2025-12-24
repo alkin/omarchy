@@ -120,9 +120,24 @@ fi
 WORKSPACE_CONFIG+="\n"
 WORKSPACE_CONFIG+="# Workspace 3: Three terminal instances\n"
 if [ -n "$TERMINAL_EXEC" ]; then
-    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
-    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
-    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] uwsm-app -- $TERMINAL_EXEC\n"
+    # Create a wrapper script to open three terminals with delays
+    # This ensures all three terminals are opened even if Hyprland tries to deduplicate exec-once
+    TERMINAL_WRAPPER="$HOME/.local/bin/omarchy-open-three-terminals"
+    mkdir -p "$HOME/.local/bin"
+    cat > "$TERMINAL_WRAPPER" << TERMINAL_SCRIPT_EOF
+#!/bin/bash
+# Wrapper script to open three terminal instances on workspace 3
+TERMINAL_EXEC="$TERMINAL_EXEC"
+uwsm-app -- "\$TERMINAL_EXEC" &
+sleep 0.3
+uwsm-app -- "\$TERMINAL_EXEC" &
+sleep 0.3
+uwsm-app -- "\$TERMINAL_EXEC" &
+TERMINAL_SCRIPT_EOF
+    chmod +x "$TERMINAL_WRAPPER"
+    # Use exec instead of exec-once to ensure it runs every time workspace 3 is accessed
+    # But wrap it in a way that only runs once at startup
+    WORKSPACE_CONFIG+="exec-once = [workspace 3 silent] bash -c '$TERMINAL_WRAPPER'\n"
 else
     WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
     WORKSPACE_CONFIG+="# exec-once = [workspace 3 silent] uwsm-app -- xdg-terminal-exec\n"
@@ -152,6 +167,16 @@ fi
 
 # Add workspace configuration
 echo -e "$WORKSPACE_CONFIG" >> "$AUTOSTART_CONFIG"
+
+# Add window rules to ensure applications go to correct workspaces
+# These rules override any default behavior and ensure correct workspace assignment
+echo "" >> "$AUTOSTART_CONFIG"
+echo "# Window rules to ensure correct workspace assignment" >> "$AUTOSTART_CONFIG"
+if [ -n "$CURSOR_EXEC" ]; then
+    # Cursor can have different class names, so we match multiple variations
+    # This ensures Cursor always opens on workspace 2, even if launched manually
+    echo "windowrule = workspace 2, class:^(cursor|Cursor|com\.todesktop\.*)$" >> "$AUTOSTART_CONFIG"
+fi
 
 # Display configured workspaces
 if [ -n "$CHROME_EXEC" ]; then
