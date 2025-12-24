@@ -27,6 +27,9 @@ echo -e "${NC}\n"
 # Track exit codes
 EXIT_CODES=0
 
+# Run yay update
+yay -Sy
+
 # Run install-dev.sh
 if [ -f "$SCRIPT_DIR/install-dev.sh" ]; then
     echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"

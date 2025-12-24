@@ -107,7 +107,52 @@ if command -v fzf &>/dev/null; then
     fi
 fi
 
-# Add initialization section for tools (mise, zoxide, starship)
+# Initialize zoxide first (needed by Omarchy aliases)
+if ! grep -qE "# Initialize zoxide" "$ZSH_RC" 2>/dev/null; then
+    cat >> "$ZSH_RC" << 'ZOXIDE_EOF'
+
+# Initialize zoxide (needed before Omarchy aliases)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+ZOXIDE_EOF
+    echo -e "${GREEN}  ✓ Zoxide initialization added to .zshrc${NC}"
+fi
+
+# Load Omarchy aliases and functions
+OMARCHY_BASH_DIR="$HOME/.local/share/omarchy/default/bash"
+if [ -d "$OMARCHY_BASH_DIR" ]; then
+    if ! grep -qE "# Omarchy aliases and functions" "$ZSH_RC" 2>/dev/null; then
+        cat >> "$ZSH_RC" << 'OMARCHY_EOF'
+
+# Omarchy aliases and functions
+OMARCHY_BASH_DIR="$HOME/.local/share/omarchy/default/bash"
+if [ -d "$OMARCHY_BASH_DIR" ]; then
+  # Source aliases (most bash aliases work in zsh)
+  if [ -f "$OMARCHY_BASH_DIR/aliases" ]; then
+    source "$OMARCHY_BASH_DIR/aliases"
+  fi
+
+  # Source functions
+  if [ -f "$OMARCHY_BASH_DIR/functions" ]; then
+    source "$OMARCHY_BASH_DIR/functions"
+  fi
+
+  # Source environment variables
+  if [ -f "$OMARCHY_BASH_DIR/envs" ]; then
+    source "$OMARCHY_BASH_DIR/envs"
+  fi
+fi
+OMARCHY_EOF
+        echo -e "${GREEN}  ✓ Omarchy aliases and functions added to .zshrc${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ Omarchy aliases section already exists in .zshrc${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠ Omarchy bash directory not found, skipping aliases${NC}"
+fi
+
+# Add initialization section for other tools (mise, starship)
 # Check if initialization section already exists
 if ! grep -qE "# Tool initializations" "$ZSH_RC" 2>/dev/null; then
     cat >> "$ZSH_RC" << 'TOOLS_EOF'
@@ -119,10 +164,6 @@ fi
 
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
-fi
-
-if command -v zoxide &> /dev/null; then
-  eval "$(zoxide init zsh)"
 fi
 TOOLS_EOF
     echo -e "${GREEN}  ✓ Tool initializations added to .zshrc${NC}"
@@ -184,14 +225,6 @@ else
     echo -e "${YELLOW}  ⚠ Alias k already exists, skipping${NC}"
 fi
 
-# Add g=git alias (check if it exists)
-if ! alias_exists "g"; then
-    echo 'alias g="git"' >> "$ZSH_RC"
-    echo -e "${GREEN}  ✓ Added alias: g=git${NC}"
-else
-    echo -e "${YELLOW}  ⚠ Alias g already exists, skipping${NC}"
-fi
-
 # Add sail alias
 if ! alias_exists "sail"; then
     echo 'alias sail="vendor/bin/sail"' >> "$ZSH_RC"
@@ -215,9 +248,10 @@ echo -e "    - Auto-suggestions (zsh-autosuggestions)"
 echo -e "    - Syntax highlighting (zsh-syntax-highlighting)"
 echo -e "    - Fuzzy history search (fzf + history-substring-search)"
 echo -e "    - Zoxide for smart directory navigation"
+echo -e "  • Omarchy aliases and functions loaded"
 echo -e "  • Zsh set as default shell"
 echo -e "  • Starship using default configuration"
-echo -e "  • Aliases added: k=kubectl, g=git, sail=vendor/bin/sail"
+echo -e "  • Custom aliases added: k=kubectl, sail=vendor/bin/sail"
 echo -e "\n${YELLOW}Note: You may need to log out and back in for zsh to become your default shell.${NC}"
 echo -e "${YELLOW}      Or run: exec zsh${NC}\n"
 
