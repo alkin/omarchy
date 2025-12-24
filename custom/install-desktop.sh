@@ -22,9 +22,9 @@ if ! command -v omarchy-pkg-add &>/dev/null; then
     exit 1
 fi
 
-# Install Google Chrome
+# Install Google Chrome (AUR)
 echo -e "${YELLOW}🌐 Installing Google Chrome...${NC}"
-omarchy-pkg-add google-chrome
+yay -S --noconfirm --needed google-chrome
 echo -e "${GREEN}  ✓ Google Chrome installed${NC}\n"
 
 # Set Google Chrome as default browser
@@ -32,7 +32,7 @@ echo -e "${YELLOW}⚙️  Setting Google Chrome as default browser...${NC}"
 if command -v google-chrome-stable &>/dev/null || command -v google-chrome &>/dev/null; then
     # Find the desktop file
     CHROME_DESKTOP=$(find /usr/share/applications ~/.local/share/applications -name "*google-chrome*.desktop" 2>/dev/null | head -1)
-    
+
     if [ -n "$CHROME_DESKTOP" ]; then
         DESKTOP_BASENAME=$(basename "$CHROME_DESKTOP")
         xdg-settings set default-web-browser "$DESKTOP_BASENAME"
@@ -47,17 +47,17 @@ else
 fi
 echo ""
 
-# Install DisplayLink drivers
+# Install DisplayLink drivers (AUR)
 echo -e "${YELLOW}🖥️  Installing DisplayLink drivers...${NC}"
-omarchy-pkg-add evdi-dkms displaylink
+yay -S --noconfirm --needed evdi-dkms displaylink
 echo -e "${GREEN}  ✓ DisplayLink drivers installed${NC}\n"
 
-# Install Ventoy
+# Install Ventoy (AUR)
 echo -e "${YELLOW}💾 Installing Ventoy...${NC}"
-omarchy-pkg-add ventoy-bin
+yay -S --noconfirm --needed ventoy-bin
 echo -e "${GREEN}  ✓ Ventoy installed${NC}\n"
 
-# Install VeraCrypt
+# Install VeraCrypt (official repo)
 echo -e "${YELLOW}🔒 Installing VeraCrypt...${NC}"
 omarchy-pkg-add veracrypt
 echo -e "${GREEN}  ✓ VeraCrypt installed${NC}\n"

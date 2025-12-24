@@ -39,16 +39,27 @@ WEBAPPS=(
 
 # Uninstall packages
 echo -e "${YELLOW}Uninstalling packages...${NC}"
+INSTALLED_PACKAGES=()
+
+# Collect installed packages
 for pkg in "${PACKAGES[@]}"; do
     if pacman -Q "$pkg" &>/dev/null; then
-        echo -e "  Removing ${GREEN}$pkg${NC}"
-        if ! sudo pacman -Rns --noconfirm "$pkg"; then
-            echo -e "  ${RED}Failed to remove $pkg${NC}"
-        fi
+        INSTALLED_PACKAGES+=("$pkg")
+        echo -e "  Found ${GREEN}$pkg${NC}"
     else
         echo -e "  ${YELLOW}$pkg${NC} is not installed, skipping..."
     fi
 done
+
+# Uninstall all installed packages in a single call
+if [[ ${#INSTALLED_PACKAGES[@]} -gt 0 ]]; then
+    echo -e "\n  Removing ${#INSTALLED_PACKAGES[@]} package(s) in a single operation..."
+    if ! sudo pacman -Rns --noconfirm "${INSTALLED_PACKAGES[@]}"; then
+        echo -e "  ${RED}Failed to remove some packages${NC}"
+    fi
+else
+    echo -e "  No packages to uninstall"
+fi
 
 # Uninstall web applications
 echo -e "\n${YELLOW}Uninstalling web applications...${NC}"

@@ -30,9 +30,9 @@ echo -e "${GREEN}  ✓ PHP, Composer, and Laravel installed${NC}\n"
 # Node.js ecosystem (mise, node, bun, npm, pnpm)
 echo -e "${YELLOW}📦 Installing Node.js ecosystem...${NC}"
 
-# mise is already installed, but ensure it's available
+# mise is already installed, but ensure it's available (AUR)
 if ! command -v mise &>/dev/null; then
-    omarchy-pkg-add mise
+    yay -S --noconfirm --needed mise
 fi
 
 # Install Node.js via mise
@@ -59,9 +59,9 @@ echo -e "${YELLOW}☸️  Installing Kubernetes tools...${NC}"
 omarchy-pkg-add kubectl kubectx helm k9s
 echo -e "${GREEN}  ✓ Kubernetes tools installed${NC}\n"
 
-# IDE
+# IDE (AUR)
 echo -e "${YELLOW}💻 Installing IDE...${NC}"
-omarchy-pkg-add cursor-bin
+yay -S --noconfirm --needed cursor-bin
 echo -e "${GREEN}  ✓ IDE installed${NC}\n"
 
 # System utilities

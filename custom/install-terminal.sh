@@ -22,12 +22,12 @@ if ! command -v omarchy-pkg-add &>/dev/null; then
     exit 1
 fi
 
-# Install ghostty and set as default terminal
+# Install ghostty and set as default terminal (AUR)
 echo -e "${YELLOW}📦 Installing Ghostty terminal...${NC}"
 if command -v omarchy-install-terminal &>/dev/null; then
     omarchy-install-terminal ghostty
 else
-    omarchy-pkg-add ghostty
+    yay -S --noconfirm --needed ghostty
     # Set ghostty as default terminal
     mkdir -p ~/.config
     cat > ~/.config/xdg-terminals.list << EOF
@@ -58,7 +58,7 @@ fi
 add_config_if_missing() {
     local config_line="$1"
     local config_file="$2"
-    
+
     if ! grep -Fxq "$config_line" "$config_file" 2>/dev/null; then
         echo "$config_line" >> "$config_file"
     fi
