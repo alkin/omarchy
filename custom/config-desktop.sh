@@ -51,12 +51,8 @@ fi
 
 # Find terminal executable
 TERMINAL_EXEC=""
-if command -v xdg-terminal-exec &>/dev/null; then
-    TERMINAL_EXEC="xdg-terminal-exec"
-elif command -v ghostty &>/dev/null; then
+if command -v ghostty &>/dev/null; then
     TERMINAL_EXEC="ghostty"
-elif command -v alacritty &>/dev/null; then
-    TERMINAL_EXEC="alacritty"
 else
     echo -e "${YELLOW}⚠ Terminal not found. Workspace 3 will not be configured.${NC}"
 fi
@@ -74,8 +70,8 @@ if [ -f "$AUTOSTART_CONFIG" ]; then
 fi
 
 # Detect Chrome profiles
-COMUNITIVE_PROFILE="Default"
 RICARDO_PROFILE="Profile 1"
+COMUNITIVE_PROFILE="Default"
 if [ -n "$CHROME_EXEC" ]; then
     CHROME_PROFILES_DIR="$HOME/.config/google-chrome"
     if [ ! -d "$CHROME_PROFILES_DIR" ]; then
