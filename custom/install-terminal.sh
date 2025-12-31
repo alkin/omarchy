@@ -19,8 +19,15 @@ echo -e "${YELLOW}📦 Installing Ghostty terminal...${NC}"
 omarchy-install-terminal ghostty
 echo -e "${GREEN}  ✓ Ghostty installed and set as default terminal${NC}\n"
 
+
+
 # Install zsh and plugins
 echo -e "${YELLOW}📦 Installing Zsh and plugins...${NC}"
+echo -e "${BLUE}Installing zsh...${NC}"
+yay -S --noconfirm --needed omarchy-zsh
+omarchy-setup-zsh
+
+echo -e "${BLUE}Installing zsh plugins...${NC}"
 yay -S --noconfirm --needed zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search
 echo -e "${GREEN}  ✓ Zsh and plugins installed${NC}\n"
 
@@ -122,10 +129,8 @@ add_alias_if_missing() {
     fi
 }
 
-# Add k=kubectl alias
+# Add aliases
 add_alias_if_missing "k" "kubectl"
-
-# Add sail alias
 add_alias_if_missing "sail" "vendor/bin/sail"
 
 echo ""
@@ -137,7 +142,6 @@ echo -e "    - Auto-completion (zsh-completions)"
 echo -e "    - Auto-suggestions (zsh-autosuggestions)"
 echo -e "    - Syntax highlighting (zsh-syntax-highlighting)"
 echo -e "    - Fuzzy history search (fzf + history-substring-search)"
-echo -e "    - Zoxide for smart directory navigation"
 echo -e "  • Omarchy aliases and functions loaded"
 echo -e "  • Zsh set as default shell"
 echo -e "  • Starship using default configuration"

@@ -15,20 +15,6 @@ NC='\033[0m' # No Color
 # Run yay update
 yay -Sy
 
-# Check if current shell is zsh, if not install it
-# Use ps to get the actual running shell, not $SHELL which is the default shell
-CURRENT_SHELL=$(ps -p $$ -o comm= 2>/dev/null | xargs basename 2>/dev/null || echo "unknown")
-if [ "$CURRENT_SHELL" != "zsh" ]; then
-    echo -e "${BLUE}Installing zsh...${NC}"
-    yay -S --noconfirm --needed omarchy-zsh
-    omarchy-setup-zsh
-    echo -e "${GREEN}zsh installed and configured${NC}"
-
-    echo -e "${BLUE}Switching to zsh...${NC}"
-    exec zsh "$0"
-    exit 0
-fi
-
 # Run install-desktop.sh
 echo -e "${BLUE}Installing Desktop Packages...${NC}"
 bash ./install-desktop.sh

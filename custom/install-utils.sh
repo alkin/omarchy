@@ -14,15 +14,21 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}Installing System Utilities...${NC}\n"
 
+PACKAGES=(
+    "cpupower"
+    "dell-command-configure"
+    "bind"
+    "jq"
+)
+
 # System utilities
 echo -e "${YELLOW}🔧 Installing system utilities...${NC}"
-yay -S --noconfirm --needed cpupower dell-command-configure bind jq
+yay -S --noconfirm --needed "${PACKAGES[@]}"
 echo -e "${GREEN}  ✓ System utilities installed${NC}\n"
 
 echo -e "${GREEN}Installation complete:${NC}"
-echo -e "  • cpupower"
-echo -e "  • dell-command-configure (cctk)"
-echo -e "  • bind"
-echo -e "  • jq"
+for package in "${PACKAGES[@]}"; do
+    echo -e "  • $package"
+done
 echo ""
 
