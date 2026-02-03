@@ -72,22 +72,22 @@ peepi tinker
 # TODO
 
 - Dictation
-    - Model portugues
-    - Usar GPU / NPU ?
+    - Conseguir usar na GPU / NPU
+    - Usar modemo maior
 
 - Opencode with gemini token
 
-- Cursor theme
-- zsh plugins and usage review
-- steam
 - Workspaces
     - 1 -> Chrome
     - 2 -> Cursor
     - Scratchpag - 3 terminals
     - 9 -> Spotify-9 laptop
-- Chrome profiles
 
-- [OK] rep mirrors
+# Aprender
+
+- zsh plugins and usage review
+- steam
+- Chrome profiles
 - Terminal
     - nano / vim ?
     - starship info -> Remove unused (bun version etc)
