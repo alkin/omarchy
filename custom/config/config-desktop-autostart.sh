@@ -5,6 +5,9 @@
 # - Workspace 2: Cursor
 # - Workspace 3: 3 Ghostty terminal windows
 # - Workspace 6: Spotify
+#
+# Strategy: Use a startup script that opens apps and moves windows via hyprctl.
+# No windowrules in config files = no persistence issues with new windows.
 
 set +e
 
@@ -20,7 +23,6 @@ echo -e "${BLUE}⚙️  Configurando autostart do desktop...${NC}\n"
 # Hyprland config directory
 HYPR_CONFIG_DIR="$HOME/.config/hypr"
 AUTOSTART_CONF="$HYPR_CONFIG_DIR/autostart.conf"
-HYPRLAND_CONF="$HYPR_CONFIG_DIR/hyprland.conf"
 
 # Ensure config directory exists
 if [ ! -d "$HYPR_CONFIG_DIR" ]; then
@@ -47,22 +49,102 @@ cat >> "$AUTOSTART_CONF" << 'EOF'
 
 # >>> Desktop Autostart Configuration >>>
 # Launch apps in specific workspaces on boot
-# Note: Using hyprctl to move windows only at startup, so new instances open in current workspace
+# Uses a startup script - NO windowrules here to avoid persistence issues
 
-# Autostart apps and move them to specific workspaces
-exec-once = sleep 1 && uwsm-app -- google-chrome-stable && sleep 2 && hyprctl dispatch movetoworkspacesilent 1,class:^(google-chrome|Google-chrome)$
-exec-once = sleep 2 && uwsm-app -- cursor && sleep 2 && hyprctl dispatch movetoworkspacesilent 2,class:^(Cursor|cursor|code-url-handler)$
-exec-once = sleep 3 && uwsm-app -- spotify && sleep 2 && hyprctl dispatch movetoworkspacesilent 6,class:^(Spotify|spotify)$
-
-# Launch 3 terminal windows in workspace 3
-exec-once = sleep 4 && ghostty --title=workspace-term & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
-exec-once = sleep 5 && ghostty --title=workspace-term & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
-exec-once = sleep 6 && ghostty --title=workspace-term -e bash -ic "c" & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
+exec-once = $HOME/.local/bin/omarchy-desktop-autostart
 
 # <<< Desktop Autostart Configuration <<<
 EOF
 
 echo -e "${GREEN}✓ Configuração de autostart adicionada${NC}"
+
+# Create the autostart script
+echo -e "${YELLOW}Criando script de autostart...${NC}"
+
+AUTOSTART_SCRIPT="$HOME/.local/bin/omarchy-desktop-autostart"
+mkdir -p "$HOME/.local/bin"
+
+cat > "$AUTOSTART_SCRIPT" << 'SCRIPT'
+#!/bin/bash
+# Desktop autostart script - opens apps and moves them to specific workspaces
+# No windowrules = new instances open in current workspace (normal behavior)
+
+# Function to wait for a window by class and move it to workspace
+launch_and_move() {
+    local cmd="$1"
+    local class_pattern="$2"
+    local workspace="$3"
+    local max_wait="${4:-10}"
+    
+    # Get current window count for this class
+    local initial_count=$(hyprctl clients -j | jq "[.[] | select(.class | test(\"$class_pattern\"; \"i\"))] | length")
+    
+    # Launch the app
+    eval "$cmd" &
+    
+    # Wait for new window to appear
+    local waited=0
+    while [ $waited -lt $max_wait ]; do
+        sleep 0.1
+        waited=$((waited + 1))
+        
+        local current_count=$(hyprctl clients -j | jq "[.[] | select(.class | test(\"$class_pattern\"; \"i\"))] | length")
+        
+        if [ "$current_count" -gt "$initial_count" ]; then
+            # New window appeared, get its address
+            local window_addr=$(hyprctl clients -j | jq -r "[.[] | select(.class | test(\"$class_pattern\"; \"i\"))] | last | .address")
+            
+            if [ -n "$window_addr" ] && [ "$window_addr" != "null" ]; then
+                # Move window to workspace silently
+                hyprctl dispatch movetoworkspacesilent "$workspace,address:$window_addr"
+                return 0
+            fi
+        fi
+    done
+    
+    return 1
+}
+
+# Wait a moment for Hyprland to be fully ready
+sleep 0.5
+
+# Launch Chrome -> Workspace 1
+launch_and_move "uwsm-app -- google-chrome-stable" "google-chrome|Google-chrome|chromium" 1 10
+sleep 0.1
+
+# Launch Cursor -> Workspace 2
+launch_and_move "uwsm-app -- cursor" "Cursor|cursor|code-url-handler" 2 10
+sleep 0.1
+
+
+# Launch Spotify -> Workspace 6
+launch_and_move "uwsm-app -- spotify" "Spotify|spotify" 6 10
+sleep 0.1
+
+
+# Launch 3 Ghostty terminals -> Workspace 3
+launch_and_move "ghostty" "com.mitchellh.ghostty" 3 5
+sleep 0.1
+launch_and_move "ghostty" "com.mitchellh.ghostty" 3 5
+sleep 0.1
+launch_and_move "ghostty -e bash -ic 'c'" "com.mitchellh.ghostty" 3 5
+sleep 0.1
+
+
+# Switch to workspace 1
+sleep 0.2
+hyprctl dispatch workspace 1
+SCRIPT
+
+chmod +x "$AUTOSTART_SCRIPT"
+echo -e "${GREEN}✓ Script de autostart criado: $AUTOSTART_SCRIPT${NC}"
+
+# Remove old cleanup script if exists
+OLD_CLEANUP="$HOME/.local/bin/omarchy-desktop-autostart-cleanup"
+if [ -f "$OLD_CLEANUP" ]; then
+    rm -f "$OLD_CLEANUP"
+    echo -e "${YELLOW}✓ Script de cleanup antigo removido${NC}"
+fi
 
 # Clean up multiple blank lines
 if [ -f "$AUTOSTART_CONF" ]; then
@@ -81,7 +163,7 @@ echo ""
 echo -e "${YELLOW}Notas:${NC}"
 echo -e "  • Apps são movidos para workspaces apenas na inicialização"
 echo -e "  • Novas instâncias abrem no workspace atual (comportamento normal)"
-echo -e "  • Os terminais iniciais são identificados pelo título 'workspace-term'"
+echo -e "  • Não usa windowrules - evita problemas de persistência"
 echo ""
 echo -e "${BLUE}Reinicie o Hyprland ou faça logout/login para aplicar as mudanças.${NC}"
 echo ""

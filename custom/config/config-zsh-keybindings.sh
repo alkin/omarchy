@@ -70,12 +70,12 @@ mkdir -p "$ZSH_CONFIG_DIR"
 echo -e "${YELLOW}Criando arquivo de configuração de keybindings...${NC}"
 
 # Create keybindings configuration file
+# NOTE: This file is designed to work WITH zsh plugins (autosuggestions, syntax-highlighting, etc.)
+# It does NOT override arrow keys or force emacs mode to avoid conflicts
 cat > "$ZSH_CONFIG_DIR/keybindings.zsh" << 'EOF'
 # ZSH keybindings for terminal navigation keys
 # This fixes HOME, INSERT, DELETE, END, Page Up/Down keys
-
-# Enable emacs mode keybindings (works best with these settings)
-bindkey -e
+# Compatible with zsh-autosuggestions, zsh-syntax-highlighting, and history-substring-search
 
 # First, try to use terminfo if available
 if [[ -n "${terminfo[khome]}" ]]; then
@@ -92,7 +92,6 @@ if [[ -n "${terminfo[kdch1]}" ]]; then
 fi
 
 # Remove Page Up/Down bindings from terminfo to let Ghostty handle them for scrolling
-# kpp = Page Up (previous page), knp = Page Down (next page)
 if [[ -n "${terminfo[kpp]}" ]]; then
     bindkey -r "${terminfo[kpp]}"
 fi
@@ -106,7 +105,6 @@ bindkey "^[[1~"   beginning-of-line  # vt100, rxvt
 bindkey "^[OH"    beginning-of-line  # tmux, screen
 bindkey "\eOH"    beginning-of-line  # alternative
 bindkey "\e[H"    beginning-of-line  # alternative
-bindkey "^A"      beginning-of-line  # emacs style (always works)
 
 # END key - all common variations
 bindkey "^[[F"    end-of-line        # xterm, xterm-256color
@@ -114,33 +112,29 @@ bindkey "^[[4~"   end-of-line        # vt100, rxvt
 bindkey "^[OF"    end-of-line        # tmux, screen
 bindkey "\eOF"    end-of-line        # alternative
 bindkey "\e[F"    end-of-line        # alternative
-bindkey "^E"      end-of-line        # emacs style (always works)
 
 # DELETE key - all common variations
 bindkey "^[[3~"   delete-char        # xterm, xterm-256color, vt100
-bindkey "^?"      delete-char        # some terminals
 bindkey "\e[3~"   delete-char        # alternative
 
 # INSERT key - all common variations
 bindkey "^[[2~"   overwrite-mode     # xterm, xterm-256color, vt100
 bindkey "\e[2~"   overwrite-mode     # alternative
 
-# Page Up/Down - Remover bindings para permitir scroll nativo do Ghostty
-# Isso permite que o terminal processe as teclas para fazer scroll vertical
-# Sequências comuns: ^[[5~ (Page Up), ^[[6~ (Page Down)
+# Page Up/Down - Remove bindings to let Ghostty handle scrolling
 bindkey -r "^[[5~"    # Remove Page Up binding
 bindkey -r "^[[6~"    # Remove Page Down binding
 bindkey -r "\e[5~"    # Remove Page Up binding (alternative)
 bindkey -r "\e[6~"    # Remove Page Down binding (alternative)
-# Também remover versões com modificadores
 bindkey -r "^[[5;5~"  # Ctrl+Page Up
 bindkey -r "^[[6;5~"  # Ctrl+Page Down
 bindkey -r "^[[5;2~"  # Shift+Page Up
 bindkey -r "^[[6;2~"  # Shift+Page Down
 
-# Arrow keys (for terminals that send different sequences)
-bindkey "^[[A"    up-line-or-search     # Up arrow
-bindkey "^[[B"    down-line-or-search   # Down arrow
+# NOTE: Arrow keys (up/down) are NOT configured here to preserve
+# history-substring-search plugin bindings
+
+# Right/Left arrows for character navigation
 bindkey "^[[C"    forward-char          # Right arrow
 bindkey "^[[D"    backward-char         # Left arrow
 
@@ -149,41 +143,19 @@ bindkey "^[[1;5C" forward-word          # Ctrl + Right
 bindkey "^[[1;5D" backward-word         # Ctrl + Left
 bindkey "\e[1;5C" forward-word          # alternative
 bindkey "\e[1;5D" backward-word         # alternative
-bindkey "^[[C"    forward-char          # Right (if not bound)
-bindkey "^[[D"    backward-char         # Left (if not bound)
 
 # ALT + arrow keys for word navigation (alternative)
 bindkey "^[[1;3C" forward-word          # Alt + Right
 bindkey "^[[1;3D" backward-word         # Alt + Left
 
-# CTRL + DELETE / BACKSPACE for word deletion
+# CTRL + DELETE for word deletion
 bindkey "^[[3;5~" kill-word             # Ctrl + Delete
-bindkey "^H"      backward-kill-word    # Ctrl + Backspace
-bindkey "^W"      backward-kill-word    # Ctrl + W (emacs style)
 
 # Backspace key
 bindkey "^?"      backward-delete-char  # Standard backspace
-bindkey "^H"      backward-delete-char  # Alternative backspace
 
 # Additional useful keybindings
 bindkey "^[[Z"    reverse-menu-complete # Shift+Tab for reverse completion
-bindkey "^U"      backward-kill-line    # Ctrl + U - kill to beginning of line
-bindkey "^K"      kill-line             # Ctrl + K - kill to end of line
-
-# Desabilitar modo de aplicação do terminal para permitir Page Up/Down funcionar
-# O modo de aplicação força o zsh a capturar todas as teclas especiais
-# Comentado para permitir que Ghostty processe Page Up/Down para scroll
-# if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
-#     autoload -Uz add-zle-hook-widget
-#     function zle_application_mode_start { 
-#         echoti smkx 2>/dev/null
-#     }
-#     function zle_application_mode_stop { 
-#         echoti rmkx 2>/dev/null
-#     }
-#     add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
-#     add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-# fi
 EOF
 
 echo -e "${GREEN}✓ Arquivo de keybindings criado em: $ZSH_CONFIG_DIR/keybindings.zsh${NC}"
@@ -219,23 +191,26 @@ echo ""
 echo -e "${YELLOW}O que foi feito:${NC}"
 echo -e "  • Configurado Ghostty para usar term = xterm-256color"
 echo -e "  • Adicionado Page Up/Down para fazer scroll do terminal no Ghostty"
-echo -e "  • Criado arquivo de keybindings para zsh com todas as sequências de escape"
+echo -e "  • Criado arquivo de keybindings para zsh (compatível com plugins)"
 echo -e "  • Configurado mapeamento de teclas: HOME, END, INSERT, DELETE"
 echo -e "  • Adicionado suporte a CTRL+Arrows e ALT+Arrows para navegação por palavras"
-echo -e "  • Configurado CTRL+DELETE e CTRL+Backspace para deletar palavras"
 echo -e "  • Adicionado source ao ~/.zshrc"
+echo ""
+echo -e "${YELLOW}Compatibilidade:${NC}"
+echo -e "  • ✓ zsh-autosuggestions"
+echo -e "  • ✓ zsh-syntax-highlighting"
+echo -e "  • ✓ zsh-history-substring-search"
 echo ""
 echo -e "${BLUE}Para aplicar as mudanças:${NC}"
 echo -e "  ${RED}1. FECHE E REABRA o Ghostty${NC} ${YELLOW}(para aplicar todas as configurações)${NC}"
 echo -e "  ${GREEN}2. No novo terminal, execute: source ~/.zshrc${NC}"
 echo ""
 echo -e "${YELLOW}Testar as teclas:${NC}"
-echo -e "  • Digite: ${GREEN}echo \$TERM${NC} - deve mostrar ${GREEN}xterm-256color${NC}"
-echo -e "  • HOME: Ir para o início da linha (também CTRL+A)"
-echo -e "  • END: Ir para o fim da linha (também CTRL+E)"
+echo -e "  • HOME: Ir para o início da linha"
+echo -e "  • END: Ir para o fim da linha"
 echo -e "  • DELETE: Deletar caractere à direita"
 echo -e "  • INSERT: Alternar modo de sobrescrever"
-echo -e "  • PAGE UP/DOWN: Scroll do terminal (rolar histórico de saída)"
+echo -e "  • PAGE UP/DOWN: Scroll do terminal"
 echo -e "  • CTRL+Arrows: Navegar por palavras"
-echo -e "  • CTRL+DELETE: Deletar palavra à direita"
+echo -e "  • Up/Down: history-substring-search (se configurado)"
 echo ""
