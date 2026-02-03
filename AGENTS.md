@@ -10,6 +10,9 @@ The `custom` folder will have a run.sh script that will be used to run the custo
 
 Each customization will be a separate file and execute a specific task, like installing a package, changing a configuration file, etc.
 
-Assume all omarchy-* commands are available.
-Assume yay is available.
-Assume Pipewire is the default sound backend.
+Assume:
+- All omarchy-* commands are available.
+- yay is available.
+- Pipewire is the default sound backend.
+
+Scripts should be idempotent. Running them multiple times should not generate duplicates or unexpected consequences.
