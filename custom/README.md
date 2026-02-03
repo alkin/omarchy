@@ -16,10 +16,12 @@
     pulumi login
 - **Initialize and rename your Kubernetes contexts.**
 - **Sign in to Cursor; refresh your profile if needed.**
-- **Start Comunitive and Peepi.**
+- **Setup Work Projects Comunitive and Peepi.**
 
 
-# Comunitive
+# Work
+
+## Comunitive
 
 ```bash
 # Setup
@@ -42,10 +44,9 @@ k get po
 
 pulumi up
 k rollout restart deployment -l app=comunitive
-
 ```
 
-# Peepi
+## Peepi
 
 ```bash
 # Setup
