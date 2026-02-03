@@ -77,11 +77,6 @@ peepi tinker
 
 - Opencode with gemini token
 
-- Workspaces
-    - 1 -> Chrome
-    - 2 -> Cursor
-    - Scratchpag - 3 terminals
-    - 9 -> Spotify-9 laptop
 
 # Aprender
 
