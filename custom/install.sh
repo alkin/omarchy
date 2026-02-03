@@ -45,9 +45,9 @@ bash ./install/install-dictation.sh
 echo
 
 # Run config-desktop.sh
-# echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
-# bash ./config-desktop.sh
-# echo
+echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
+bash ./config-desktop.sh
+echo
 
 # Run config-laptop.sh
 echo -e "${BLUE}Configuring Laptop Settings...${NC}"

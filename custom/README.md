@@ -71,13 +71,6 @@ peepi tinker
 
 # TODO
 
-- Dictation
-    - Conseguir usar na GPU / NPU
-    - Usar modemo maior
-
-- Opencode with gemini token
-
-
 # Aprender
 
 - zsh plugins and usage review
