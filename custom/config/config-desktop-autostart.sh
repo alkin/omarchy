@@ -62,7 +62,7 @@ exec-once = sleep 3 && uwsm-app -- spotify
 # Launch 3 terminal windows for scratchpad with specific title for identification
 exec-once = sleep 4 && ghostty --title=scratchpad-term
 exec-once = sleep 4.5 && ghostty --title=scratchpad-term
-exec-once = sleep 5 && ghostty --title=scratchpad-term
+exec-once = sleep 5 && ghostty --title=scratchpad-term -e bash -ic "c"
 
 # <<< Desktop Autostart Configuration <<<
 EOF
