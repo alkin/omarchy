@@ -85,4 +85,8 @@ peepi tinker
 # Conventions
 
 - Workspaces
+    - Chrome
+    - Cursor
+    - Terminal
 - Scratchpad
+    - anotações e excalidraw ?
