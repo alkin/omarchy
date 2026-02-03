@@ -71,36 +71,50 @@ peepi tinker
 
 # TODO
 
-- Invert the scroll on trackpad
-- Criar script da comunitive
+- Notebook Config
+    - Invert the scroll on trackpad
+    - f4 -> play pause
+    - monitor config
+    - Aumentar waybar no monitor externo
+
 - Cursor theme
 - zsh plugins and usage review
 - steam
 - config desktop
 - Chrome profiles
-- rep
-- f4 -> play pause
-- home button on shell ?
-- nano / vim ?
-- monitor principal é o externo
-- ghostty scroll speed
-- starship info
-- dictation ?
-- snapshots ?
+- rep mirrors
+- Terminal
+    - Scroll speed
+    - home / del button on shell ?
+    - nano / vim ?
+    - starship info -> Remove unused (bun version etc)
+- Usage
+    - dictation ?
+    - snapshots ?
+    - printscreen
 
 # Usage
 
 - Omarchy
-    - Basic Keybindings
+    - Keybindings
+    - Waybar
+    - Printscreen, Screen Capture, Dictation
 - Hyprland
+    - Keybindings
     - Workspaces + Scratchpad
 - Chrome
+    - Keybindings
+    - Profiles, Default Tabs, Favorite bar
 - Cursor
+    - Keybindings
+    - Profile, Extensions, Keybindings
 - Terminal
+    - Keybindings
     - Ghostty, zsh, prompt, aliases
-    - TUI, apps
+    - TUI, CLI tools
     - neovim
 - Apps
+    - Keybindings
     - Steam
 
 # Ricing
