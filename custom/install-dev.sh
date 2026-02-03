@@ -32,8 +32,7 @@ mise use --global bun@latest 2>/dev/null || echo -e "${YELLOW}  Bun installation
 
 # npm and pnpm packages
 echo -e "${YELLOW}  Installing npm and pnpm...${NC}"
-yay -S --noconfirm --needed npm pnpm
-
+yay -S --noconfirm --needed npm pnpm yarn
 echo -e "${GREEN}  ✓ Node.js ecosystem installed${NC}\n"
 
 # PHP, Composer, Laravel
@@ -41,6 +40,7 @@ echo -e "${YELLOW}📦 Installing PHP and Composer...${NC}"
 # Update pacman database to ensure keys are up to date
 sudo pacman -Sy 2>/dev/null || true
 omarchy-install-dev-env php
+yay -S --noconfirm --needed php-gd php-sodium
 echo -e "${GREEN}  ✓ PHP and Composer installed${NC}\n"
 
 # Cloud CLIs

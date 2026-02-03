@@ -19,8 +19,6 @@ echo -e "${YELLOW}📦 Installing Ghostty terminal...${NC}"
 omarchy-install-terminal ghostty
 echo -e "${GREEN}  ✓ Ghostty installed and set as default terminal${NC}\n"
 
-
-
 # Install zsh and plugins
 echo -e "${YELLOW}📦 Installing Zsh and plugins...${NC}"
 echo -e "${BLUE}Installing zsh...${NC}"
