@@ -1,4 +1,4 @@
-Z# README
+# README
 
 ## Quick Start Setup
 
