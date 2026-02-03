@@ -71,7 +71,7 @@ peepi tinker
 
 # TODO
 
-- Invert the scroll
+- Invert the scroll on trackpad
 - Criar script da comunitive
 - Cursor theme
 - zsh plugins and usage review
@@ -80,13 +80,27 @@ peepi tinker
 - Chrome profiles
 - rep
 - f4 -> play pause
+- home button on shell ?
+- nano / vim ?
+- monitor principal é o externo
+- ghostty scroll speed
+- starship info
+- dictation ?
+- snapshots ?
 
+# Usage
 
-# Conventions
+- Omarchy
+    - Basic Keybindings
+- Hyprland
+    - Workspaces + Scratchpad
+- Chrome
+- Cursor
+- Terminal
+    - Ghostty, zsh, prompt, aliases
+    - TUI, apps
+    - neovim
+- Apps
+    - Steam
 
-- Workspaces
-    - Chrome
-    - Cursor
-    - Terminal
-- Scratchpad
-    - anotações e excalidraw ?
+# Ricing
