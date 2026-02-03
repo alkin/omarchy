@@ -41,6 +41,18 @@ echo ""
 bash "$CONFIG_DIR/config-numlock.sh"
 echo ""
 
+bash "$CONFIG_DIR/config-zsh-keybindings.sh"
+echo ""
+
+bash "$CONFIG_DIR/config-ghostty-scroll.sh"
+echo ""
+
+bash "$CONFIG_DIR/config-opacity.sh"
+echo ""
+
+bash "$CONFIG_DIR/config-microphone.sh"
+echo ""
+
 # Clean up any duplicate blank lines in bindings.conf (idempotent cleanup)
 BINDINGS_CONF="$HOME/.config/hypr/bindings.conf"
 if [ -f "$BINDINGS_CONF" ]; then
@@ -69,6 +81,10 @@ echo -e "  • CTRL F1 keybinding removed"
 echo -e "  • Waybar scaling script created for external monitors (DVI-I-1)"
 echo -e "  • Voxtype dictation configured with Portuguese Brazil model"
 echo -e "  • Num Lock enabled automatically at boot (including disk encryption screen)"
+echo -e "  • ZSH keybindings configured (HOME, END, INSERT, DELETE keys)"
+echo -e "  • Ghostty scroll speed increased (mouse-scroll-multiplier = 1.5)"
+echo -e "  • Window opacity disabled for all windows (opacity 1.0 1.0)"
+echo -e "  • Microphone configuration: monitor mic disabled, internal mic set as default"
 echo ""
 echo -e "${YELLOW}Notes:${NC}"
 echo -e "  • This script is idempotent - safe to run multiple times"

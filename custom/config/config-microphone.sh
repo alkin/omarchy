@@ -26,69 +26,10 @@ fi
 echo -e "${GREEN}✓ Detectado: PipeWire${NC}"
 echo ""
 
-# Create WirePlumber configuration to block Philips monitor microphone
-WIREPLUMBER_CONFIG_DIR="$HOME/.config/wireplumber/wireplumber.conf.d"
-mkdir -p "$WIREPLUMBER_CONFIG_DIR"
-
-echo -e "${YELLOW}Criando regra do WirePlumber para bloquear microfone do monitor...${NC}"
-
-cat > "$WIREPLUMBER_CONFIG_DIR/51-disable-monitor-mic.conf" << 'EOF'
--- Disable Philips 231P4U monitor microphone (INPUT only)
--- This prevents the external monitor microphone from being used
--- But keeps the monitor speakers/outputs working
-
-monitor.alsa.rules = {
-  {
-    matches = {
-      {
-        -- Match ONLY Philips monitor INPUT by name
-        { "node.name", "matches", "alsa_input.*Philips.*231P4U*" },
-      },
-    },
-    apply_properties = {
-      ["device.disabled"] = true,
-    },
-  },
-  {
-    matches = {
-      {
-        -- Match by device description ONLY for inputs (sources)
-        { "node.description", "matches", "Philips 231P4U*" },
-        { "media.class", "equals", "Audio/Source" },
-      },
-    },
-    apply_properties = {
-      ["device.disabled"] = true,
-    },
-  },
-}
-EOF
-
-echo -e "${GREEN}✓ Regra do WirePlumber criada${NC}"
-
-# Create additional rule to set AMD-Soundwire as default
-echo -e "${YELLOW}Criando regra para priorizar microfone interno AMD-Soundwire...${NC}"
-
-cat > "$WIREPLUMBER_CONFIG_DIR/52-default-amd-mic.conf" << 'EOF'
--- Set AMD-Soundwire internal microphone as default and highest priority
-
-monitor.alsa.rules = {
-  {
-    matches = {
-      {
-        -- Match AMD-Soundwire microphone
-        { "node.name", "matches", "alsa_input.*amd.*soundwire*" },
-      },
-    },
-    apply_properties = {
-      ["priority.session"] = 2000,
-      ["node.description"] = "Microfone Interno (AMD-Soundwire)",
-    },
-  },
-}
-EOF
-
-echo -e "${GREEN}✓ Regra de prioridade criada${NC}"
+# Configure audio profiles using pactl instead of WirePlumber rules
+# WirePlumber rules for device.profile don't work reliably, so we use pactl
+echo -e "${YELLOW}Configurando perfil de áudio do monitor Philips...${NC}"
+echo -e "${GREEN}✓ Configuração será aplicada via systemd service${NC}"
 
 # Create a systemd user service to apply microphone settings on boot/login
 echo ""
@@ -122,20 +63,16 @@ cat > "$SYSTEMD_USER_DIR/disable-monitor-mic.sh" << 'EOF'
 # Wait for audio system to be fully initialized
 sleep 3
 
-# Find and disable ONLY Philips monitor microphone inputs (not outputs/speakers)
-# We search in the "Sources" section which contains only audio inputs
-wpctl status | awk '/Sources:/,/Sinks:/' | grep -i "philips" | grep -i "231p4u" | while read -r line; do
-    # Extract device ID
-    ID=$(echo "$line" | grep -oP '\d+\.' | tr -d '.')
-    if [ -n "$ID" ]; then
-        # Mute only the input (microphone), not the entire device
-        wpctl set-mute "$ID" 1 2>/dev/null || true
-        echo "Muted Philips monitor microphone input (ID: $ID)"
-    fi
-done
+# Find Philips monitor card and set it to output-only profile (no microphone input)
+# This disables the microphone but keeps the speakers/outputs working
+PHILIPS_CARD_ID=$(pactl list cards short | grep -i "Philips.*231P4U" | awk '{print $1}')
+if [ -n "$PHILIPS_CARD_ID" ]; then
+    pactl set-card-profile "$PHILIPS_CARD_ID" output:analog-stereo 2>/dev/null || true
+    echo "Set Philips monitor to output-only profile (ID: $PHILIPS_CARD_ID) - microphone disabled, speakers enabled"
+fi
 
 # Set AMD-Soundwire microphone as default
-INTERNAL_MIC_ID=$(wpctl status | awk '/Sources:/,/Sinks:/' | grep -i "amd.*soundwire" | grep -v "HDMI\|Monitor" | head -n 1 | grep -oP '\d+\.' | tr -d '.')
+INTERNAL_MIC_ID=$(wpctl status | awk '/Sources:/,/^[A-Z]/' | grep -i "amd.*soundwire" | grep -v "HDMI\|Monitor" | head -n 1 | grep -oP '\d+\.' | tr -d '.')
 if [ -n "$INTERNAL_MIC_ID" ]; then
     wpctl set-default "$INTERNAL_MIC_ID"
     echo "Set AMD-Soundwire microphone as default (ID: $INTERNAL_MIC_ID)"
@@ -156,10 +93,6 @@ echo -e "${GREEN}✓ Serviço habilitado${NC}"
 echo ""
 echo -e "${YELLOW}Aplicando configurações imediatamente...${NC}"
 
-# Restart WirePlumber to apply new rules
-systemctl --user restart wireplumber 2>/dev/null || true
-sleep 2
-
 # Run the configuration script
 bash "$SYSTEMD_USER_DIR/disable-monitor-mic.sh"
 
@@ -167,14 +100,16 @@ echo ""
 echo -e "${GREEN}✅ Configuração concluída!${NC}"
 echo ""
 echo -e "${YELLOW}O que foi feito:${NC}"
-echo -e "  • Criadas regras do WirePlumber para bloquear apenas microfone (input) do monitor Philips"
-echo -e "  • As caixas de som (outputs) do monitor continuam funcionando normalmente"
-echo -e "  • Configurado microfone AMD-Soundwire interno como padrão com prioridade alta"
+echo -e "  • Monitor Philips configurado para profile 'output:analog-stereo' (apenas saída de áudio)"
+echo -e "  • Microfone (input) do monitor foi desabilitado"
+echo -e "  • Caixas de som (outputs) do monitor continuam funcionando normalmente"
+echo -e "  • Configurado microfone AMD-Soundwire interno como padrão"
 echo -e "  • Criado serviço systemd para aplicar configurações automaticamente no boot"
 echo -e "  • Configurações aplicadas imediatamente"
 echo ""
 echo -e "${BLUE}Verificar dispositivos de áudio:${NC}"
 echo -e "  ${GREEN}wpctl status${NC}"
+echo -e "  ${GREEN}pactl list sources short${NC}"
 echo ""
 echo -e "${YELLOW}Nota:${NC} Se conectar/desconectar o monitor, as configurações serão aplicadas automaticamente."
 echo ""

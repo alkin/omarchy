@@ -95,7 +95,7 @@ peepi tinker
 - [OK] rep mirrors
 - Terminal
     - [OK] Scroll speed - config-ghostty-scroll.sh configurado (mouse-scroll-multiplier = 1.5)
-    - home / del button on shell ?
+    - [OK] home / del button on shell - config-zsh-keybindings.sh configurado (HOME, END, INSERT, DELETE keys)
     - nano / vim ?
     - starship info -> Remove unused (bun version etc)
 - Usage
