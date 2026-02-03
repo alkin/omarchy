@@ -1,4 +1,4 @@
-# README
+Z# README
 
 ## Quick Start Setup
 
@@ -73,26 +73,29 @@ peepi tinker
 # TODO
 
 - Notebook Config
-    - Invert the scroll on trackpad
-    - f4 -> play pause
-    - monitor config
-    - Aumentar waybar no monitor externo
+    - [OK] Invert the vertical scroll on trackpad
+    - [OK] F9 -> play pause
+    - [OK] Aumentar waybar no monitor externo
+    - [OK] Remove CTRL F1 keybinding
+    - [OK] Num Lock enabled automatically at boot (including disk encryption screen)
 
 - Cursor theme
 - zsh plugins and usage review
 - steam
 - config desktop
 - Chrome profiles
-- rep mirrors
+- [OK] rep mirrors
 - Terminal
     - Scroll speed
     - home / del button on shell ?
     - nano / vim ?
     - starship info -> Remove unused (bun version etc)
 - Usage
-    - dictation ?
+    - [OK] dictation - Voxtype configured with Portuguese Brazil model
     - snapshots ?
     - printscreen
+
+- Disable opacity on all windows
 
 # Usage
 

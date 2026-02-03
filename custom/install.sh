@@ -12,27 +12,31 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Run config-mirrors.sh
+echo -e "${BLUE}Optimizing Arch Linux mirrors...${NC}"
+bash ./config-mirrors.sh
+
 # Run yay update
 yay -Sy
 
 # Run install-desktop.sh
 echo -e "${BLUE}Installing Desktop Packages...${NC}"
-bash ./install-desktop.sh
+bash ./install/install-desktop.sh
 echo
 
 # Run install-dev.sh
 echo -e "${BLUE}Installing Development Environment...${NC}"
-bash ./install-dev.sh
+bash ./install/install-dev.sh
 echo
 
 # Run install-utils.sh
 echo -e "${BLUE}Installing System Utilities...${NC}"
-bash ./install-utils.sh
+bash ./install/install-utils.sh
 echo
 
 # Run install-terminal.sh
 echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
-bash ./install-terminal.sh
+bash ./install/install-terminal.sh
 echo
 
 
