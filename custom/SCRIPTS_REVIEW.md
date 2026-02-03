@@ -27,7 +27,7 @@
    - **Status no README**: [OK] configurado
    - **Status**: ✅ **ADICIONADO ao `config-laptop.sh`**
 
-2. ❌ `config/config-microphone.sh` - Configura microfone (desabilita microfone do monitor)
+2. ❌ `config/config-audio.sh` - Configura áudio (apenas microfone interno habilitado)
    - **Status no README**: [OK] configurado
    - **Status**: ✅ **ADICIONADO ao `config-laptop.sh`**
 
@@ -44,7 +44,7 @@
 ✅ **Adicionados ao `config-laptop.sh`**:
 - `config-ghostty-scroll.sh` - Configura velocidade do scroll do Ghostty
 - `config-opacity.sh` - Remove opacidade de todas as janelas
-- `config-microphone.sh` - Configura microfone (desabilita microfone do monitor)
+- `config-audio.sh` - Configura áudio (apenas microfone interno habilitado)
 
 ## Recomendações Pendentes
 

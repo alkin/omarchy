@@ -47,7 +47,7 @@ echo ""
 bash "$CONFIG_DIR/config-opacity.sh"
 echo ""
 
-bash "$CONFIG_DIR/config-microphone.sh"
+bash "$CONFIG_DIR/config-audio.sh"
 echo ""
 
 # Clean up any duplicate blank lines in bindings.conf (idempotent cleanup)
@@ -81,7 +81,7 @@ echo -e "  • Num Lock enabled automatically at boot (including disk encryption
 echo -e "  • ZSH keybindings configured (HOME, END, INSERT, DELETE keys)"
 echo -e "  • Ghostty scroll speed increased (mouse-scroll-multiplier = 1.5)"
 echo -e "  • Window opacity disabled for all windows (opacity 1.0 1.0)"
-echo -e "  • Microphone configuration: monitor mic disabled, internal mic set as default"
+echo -e "  • Audio configuration: only internal mic enabled, all external mics muted"
 echo ""
 echo -e "${YELLOW}Notes:${NC}"
 echo -e "  • This script is idempotent - safe to run multiple times"

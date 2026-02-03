@@ -3,7 +3,7 @@
 # Configure desktop autostart - launch apps in specific workspaces on boot
 # - Workspace 1: Chrome
 # - Workspace 2: Cursor
-# - Scratchpad: 3 Ghostty terminal windows
+# - Workspace 3: 3 Ghostty terminal windows
 # - Workspace 6: Spotify
 
 set +e
@@ -47,22 +47,17 @@ cat >> "$AUTOSTART_CONF" << 'EOF'
 
 # >>> Desktop Autostart Configuration >>>
 # Launch apps in specific workspaces on boot
+# Note: Using hyprctl to move windows only at startup, so new instances open in current workspace
 
-# Window rules - assign apps to workspaces
-windowrule = workspace 1 silent, match:class ^(google-chrome|Google-chrome|chromium|Chromium)$
-windowrule = workspace 2 silent, match:class ^(Cursor|cursor|code-url-handler)$
-windowrule = workspace 6 silent, match:class ^(Spotify|spotify)$
-windowrule = workspace special:scratchpad silent, match:class ^(com.mitchellh.ghostty)$, match:title ^(scratchpad-term)
+# Autostart apps and move them to specific workspaces
+exec-once = sleep 1 && uwsm-app -- google-chrome-stable && sleep 2 && hyprctl dispatch movetoworkspacesilent 1,class:^(google-chrome|Google-chrome)$
+exec-once = sleep 2 && uwsm-app -- cursor && sleep 2 && hyprctl dispatch movetoworkspacesilent 2,class:^(Cursor|cursor|code-url-handler)$
+exec-once = sleep 3 && uwsm-app -- spotify && sleep 2 && hyprctl dispatch movetoworkspacesilent 6,class:^(Spotify|spotify)$
 
-# Autostart apps with small delays to ensure proper workspace assignment
-exec-once = sleep 1 && uwsm-app -- google-chrome-stable
-exec-once = sleep 2 && uwsm-app -- cursor
-exec-once = sleep 3 && uwsm-app -- spotify
-
-# Launch 3 terminal windows for scratchpad with specific title for identification
-exec-once = sleep 4 && ghostty --title=scratchpad-term
-exec-once = sleep 4.5 && ghostty --title=scratchpad-term
-exec-once = sleep 5 && ghostty --title=scratchpad-term -e bash -ic "c"
+# Launch 3 terminal windows in workspace 3
+exec-once = sleep 4 && ghostty --title=workspace-term & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
+exec-once = sleep 5 && ghostty --title=workspace-term & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
+exec-once = sleep 6 && ghostty --title=workspace-term -e bash -ic "c" & sleep 1 && hyprctl dispatch movetoworkspacesilent 3,title:^(workspace-term)$
 
 # <<< Desktop Autostart Configuration <<<
 EOF
@@ -80,14 +75,13 @@ echo ""
 echo -e "${YELLOW}O que foi configurado:${NC}"
 echo -e "  • Workspace 1: Google Chrome"
 echo -e "  • Workspace 2: Cursor"
+echo -e "  • Workspace 3: 3 janelas de terminal Ghostty"
 echo -e "  • Workspace 6: Spotify"
-echo -e "  • Scratchpad: 3 janelas de terminal Ghostty"
 echo ""
 echo -e "${YELLOW}Notas:${NC}"
-echo -e "  • As regras de janela garantem que os apps abram no workspace correto"
-echo -e "  • Os apps são iniciados com pequenos atrasos para evitar conflitos"
-echo -e "  • Os terminais no scratchpad são identificados pelo título 'scratchpad-term'"
-echo -e "  • Use ${GREEN}SUPER + S${NC} para mostrar/esconder o scratchpad"
+echo -e "  • Apps são movidos para workspaces apenas na inicialização"
+echo -e "  • Novas instâncias abrem no workspace atual (comportamento normal)"
+echo -e "  • Os terminais iniciais são identificados pelo título 'workspace-term'"
 echo ""
 echo -e "${BLUE}Reinicie o Hyprland ou faça logout/login para aplicar as mudanças.${NC}"
 echo ""
