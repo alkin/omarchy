@@ -18,7 +18,6 @@ Z# README
 - **Sign in to Cursor; refresh your profile if needed.**
 - **Setup Work Projects Comunitive and Peepi.**
 
-
 # Work
 
 ## Comunitive
@@ -72,21 +71,30 @@ peepi tinker
 
 # TODO
 
-- Notebook Config
-    - [OK] Invert the vertical scroll on trackpad
-    - [OK] F9 -> play pause
-    - [OK] Aumentar waybar no monitor externo
-    - [OK] Remove CTRL F1 keybinding
-    - [OK] Num Lock enabled automatically at boot (including disk encryption screen)
+- [OK] Ignorar completamente o microfone do monitor - config-microphone.sh configurado
+
+- Microfone do notebook - Audio output do monitor
+
+- Dictation
+    - Usar GPU / NPU ?
+    - Usar microfone do notebook ?
+
+- Opencode with gemini token
 
 - Cursor theme
 - zsh plugins and usage review
 - steam
-- config desktop
+- Workspaces
+    - 1 -> Chrome
+    - 2 -> Cursor
+    - Scratchpag - 3 terminals
+    - 9 -> Spotify-9 laptop
 - Chrome profiles
+- Ghostty - Scroll speed
+
 - [OK] rep mirrors
 - Terminal
-    - Scroll speed
+    - [OK] Scroll speed - config-ghostty-scroll.sh configurado (mouse-scroll-multiplier = 1.5)
     - home / del button on shell ?
     - nano / vim ?
     - starship info -> Remove unused (bun version etc)
@@ -95,7 +103,7 @@ peepi tinker
     - snapshots ?
     - printscreen
 
-- Disable opacity on all windows
+- [OK] Disable opacity on all windows - config-opacity.sh configurado (opacity 1.0 1.0 para todas as janelas)
 
 # Usage
 

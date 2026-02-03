@@ -28,6 +28,7 @@ install_php() {
     "openssl"
     "pdo_sqlite"
     "pdo_mysql"
+    "amdgpu_top"
   )
 
   # Enable Xdebug
