@@ -71,13 +71,9 @@ peepi tinker
 
 # TODO
 
-- [OK] Ignorar completamente o microfone do monitor - config-microphone.sh configurado
-
-- Microfone do notebook - Audio output do monitor
-
 - Dictation
+    - Model portugues
     - Usar GPU / NPU ?
-    - Usar microfone do notebook ?
 
 - Opencode with gemini token
 
@@ -90,20 +86,14 @@ peepi tinker
     - Scratchpag - 3 terminals
     - 9 -> Spotify-9 laptop
 - Chrome profiles
-- Ghostty - Scroll speed
 
 - [OK] rep mirrors
 - Terminal
-    - [OK] Scroll speed - config-ghostty-scroll.sh configurado (mouse-scroll-multiplier = 1.5)
-    - [OK] home / del button on shell - config-zsh-keybindings.sh configurado (HOME, END, INSERT, DELETE keys)
     - nano / vim ?
     - starship info -> Remove unused (bun version etc)
 - Usage
-    - [OK] dictation - Voxtype configured with Portuguese Brazil model
     - snapshots ?
     - printscreen
-
-- [OK] Disable opacity on all windows - config-opacity.sh configurado (opacity 1.0 1.0 para todas as janelas)
 
 # Usage
 

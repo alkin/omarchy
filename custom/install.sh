@@ -39,11 +39,20 @@ echo -e "${BLUE}Installing Terminal & Shell Configuration...${NC}"
 bash ./install/install-terminal.sh
 echo
 
+# Run install-dictation.sh
+echo -e "${BLUE}Installing Dictation...${NC}"
+bash ./install/install-dictation.sh
+echo
 
 # Run config-desktop.sh
 # echo -e "${BLUE}Configuring Desktop Workspaces...${NC}"
 # bash ./config-desktop.sh
 # echo
+
+# Run config-laptop.sh
+echo -e "${BLUE}Configuring Laptop Settings...${NC}"
+bash ./config-laptop.sh
+echo
 
 # Run uninstall.sh
 echo -e "${BLUE}Uninstalling Packages & Applications...${NC}"

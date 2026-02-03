@@ -35,9 +35,6 @@ echo ""
 bash "$CONFIG_DIR/config-waybar-monitor.sh"
 echo ""
 
-bash "$SCRIPT_DIR/install/install-dictation.sh"
-echo ""
-
 bash "$CONFIG_DIR/config-numlock.sh"
 echo ""
 

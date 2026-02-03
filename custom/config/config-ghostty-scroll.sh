@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configure Ghostty terminal to increase vertical scroll speed
-# Increases mouse-scroll-multiplier from default 0.95 to 1.5 for faster scrolling
+# Increases mouse-scroll-multiplier from default 0.95 to 3 for faster scrolling
 
 set +e
 
@@ -29,8 +29,8 @@ if [ ! -f "$GHOSTTY_CONFIG" ]; then
     touch "$GHOSTTY_CONFIG"
 fi
 
-# Scroll multiplier value (1.5 = 50% faster than default 0.95)
-SCROLL_MULTIPLIER="1.5"
+# Scroll multiplier value (3 = 3x faster than default 0.95)
+SCROLL_MULTIPLIER="3"
 
 # Check if mouse-scroll-multiplier already exists in config
 # Use sudo if file is owned by root
@@ -90,7 +90,7 @@ echo -e "${GREEN}✅ Configuração concluída!${NC}"
 echo ""
 echo -e "${YELLOW}O que foi feito:${NC}"
 echo -e "  • Configurado mouse-scroll-multiplier = $SCROLL_MULTIPLIER"
-echo -e "  • Isso aumenta a velocidade do scroll vertical em aproximadamente 58%"
+echo -e "  • Isso aumenta a velocidade do scroll vertical em 3x"
 echo ""
 echo -e "${BLUE}Nota:${NC} Reinicie o Ghostty para aplicar as mudanças."
 if [ -n "$SUDO_CMD" ]; then

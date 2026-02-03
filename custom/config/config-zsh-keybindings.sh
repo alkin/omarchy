@@ -41,6 +41,21 @@ EOF
     else
         echo -e "${GREEN}✓ Ghostty já tem configuração de term${NC}"
     fi
+    
+    # Add Page Up/Down keybindings for scrolling
+    if ! grep -q "keybind.*page_up.*scroll_page_up" "$GHOSTTY_CONFIG"; then
+        cat >> "$GHOSTTY_CONFIG" << 'EOF'
+
+# Page Up/Down for terminal scrolling (not command history)
+keybind = page_up=scroll_page_up
+keybind = page_down=scroll_page_down
+keybind = shift+page_up=scroll_page_up
+keybind = shift+page_down=scroll_page_down
+EOF
+        echo -e "${GREEN}✓ Adicionado keybindings de Page Up/Down para scroll${NC}"
+    else
+        echo -e "${GREEN}✓ Ghostty já tem keybindings de Page Up/Down${NC}"
+    fi
     echo ""
 else
     echo -e "${YELLOW}⚠ Ghostty config não encontrado em $GHOSTTY_CONFIG${NC}"
@@ -76,6 +91,15 @@ if [[ -n "${terminfo[kdch1]}" ]]; then
     bindkey "${terminfo[kdch1]}" delete-char
 fi
 
+# Remove Page Up/Down bindings from terminfo to let Ghostty handle them for scrolling
+# kpp = Page Up (previous page), knp = Page Down (next page)
+if [[ -n "${terminfo[kpp]}" ]]; then
+    bindkey -r "${terminfo[kpp]}"
+fi
+if [[ -n "${terminfo[knp]}" ]]; then
+    bindkey -r "${terminfo[knp]}"
+fi
+
 # HOME key - all common variations (xterm-256color, xterm, rxvt, etc.)
 bindkey "^[[H"    beginning-of-line  # xterm, xterm-256color
 bindkey "^[[1~"   beginning-of-line  # vt100, rxvt
@@ -101,9 +125,18 @@ bindkey "\e[3~"   delete-char        # alternative
 bindkey "^[[2~"   overwrite-mode     # xterm, xterm-256color, vt100
 bindkey "\e[2~"   overwrite-mode     # alternative
 
-# Page Up/Down
-bindkey "^[[5~"   up-line-or-history    # Page Up
-bindkey "^[[6~"   down-line-or-history  # Page Down
+# Page Up/Down - Remover bindings para permitir scroll nativo do Ghostty
+# Isso permite que o terminal processe as teclas para fazer scroll vertical
+# Sequências comuns: ^[[5~ (Page Up), ^[[6~ (Page Down)
+bindkey -r "^[[5~"    # Remove Page Up binding
+bindkey -r "^[[6~"    # Remove Page Down binding
+bindkey -r "\e[5~"    # Remove Page Up binding (alternative)
+bindkey -r "\e[6~"    # Remove Page Down binding (alternative)
+# Também remover versões com modificadores
+bindkey -r "^[[5;5~"  # Ctrl+Page Up
+bindkey -r "^[[6;5~"  # Ctrl+Page Down
+bindkey -r "^[[5;2~"  # Shift+Page Up
+bindkey -r "^[[6;2~"  # Shift+Page Down
 
 # Arrow keys (for terminals that send different sequences)
 bindkey "^[[A"    up-line-or-search     # Up arrow
@@ -137,19 +170,20 @@ bindkey "^[[Z"    reverse-menu-complete # Shift+Tab for reverse completion
 bindkey "^U"      backward-kill-line    # Ctrl + U - kill to beginning of line
 bindkey "^K"      kill-line             # Ctrl + K - kill to end of line
 
-# Make sure the terminal is in application mode when zle is active
-# This ensures the correct escape sequences are sent
-if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
-    autoload -Uz add-zle-hook-widget
-    function zle_application_mode_start { 
-        echoti smkx 2>/dev/null
-    }
-    function zle_application_mode_stop { 
-        echoti rmkx 2>/dev/null
-    }
-    add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
-    add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-fi
+# Desabilitar modo de aplicação do terminal para permitir Page Up/Down funcionar
+# O modo de aplicação força o zsh a capturar todas as teclas especiais
+# Comentado para permitir que Ghostty processe Page Up/Down para scroll
+# if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
+#     autoload -Uz add-zle-hook-widget
+#     function zle_application_mode_start { 
+#         echoti smkx 2>/dev/null
+#     }
+#     function zle_application_mode_stop { 
+#         echoti rmkx 2>/dev/null
+#     }
+#     add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+#     add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+# fi
 EOF
 
 echo -e "${GREEN}✓ Arquivo de keybindings criado em: $ZSH_CONFIG_DIR/keybindings.zsh${NC}"
@@ -184,6 +218,7 @@ echo -e "${GREEN}✅ Configuração concluída!${NC}"
 echo ""
 echo -e "${YELLOW}O que foi feito:${NC}"
 echo -e "  • Configurado Ghostty para usar term = xterm-256color"
+echo -e "  • Adicionado Page Up/Down para fazer scroll do terminal no Ghostty"
 echo -e "  • Criado arquivo de keybindings para zsh com todas as sequências de escape"
 echo -e "  • Configurado mapeamento de teclas: HOME, END, INSERT, DELETE"
 echo -e "  • Adicionado suporte a CTRL+Arrows e ALT+Arrows para navegação por palavras"
@@ -191,7 +226,7 @@ echo -e "  • Configurado CTRL+DELETE e CTRL+Backspace para deletar palavras"
 echo -e "  • Adicionado source ao ~/.zshrc"
 echo ""
 echo -e "${BLUE}Para aplicar as mudanças:${NC}"
-echo -e "  ${RED}1. FECHE E REABRA o Ghostty${NC} ${YELLOW}(para aplicar a nova configuração de TERM)${NC}"
+echo -e "  ${RED}1. FECHE E REABRA o Ghostty${NC} ${YELLOW}(para aplicar todas as configurações)${NC}"
 echo -e "  ${GREEN}2. No novo terminal, execute: source ~/.zshrc${NC}"
 echo ""
 echo -e "${YELLOW}Testar as teclas:${NC}"
@@ -200,6 +235,7 @@ echo -e "  • HOME: Ir para o início da linha (também CTRL+A)"
 echo -e "  • END: Ir para o fim da linha (também CTRL+E)"
 echo -e "  • DELETE: Deletar caractere à direita"
 echo -e "  • INSERT: Alternar modo de sobrescrever"
+echo -e "  • PAGE UP/DOWN: Scroll do terminal (rolar histórico de saída)"
 echo -e "  • CTRL+Arrows: Navegar por palavras"
 echo -e "  • CTRL+DELETE: Deletar palavra à direita"
 echo ""
