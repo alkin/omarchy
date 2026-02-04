@@ -25,20 +25,12 @@ sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup.$(date +%Y%m%d_
 # Reflector filters by country and sorts by speed
 # Optimized for speed: reduced timeouts, more threads, fewer mirrors to test
 if sudo reflector \
-    --country Brazil \
-    --country Argentina \
-    --country Chile \
-    --country Colombia \
-    --country Mexico \
-    --country "United States" \
-    --country Canada \
     --protocol https \
-    --latest 10 \
     --fastest 5 \
     --number 5 \
     --connection-timeout 2 \
     --download-timeout 5 \
-    --threads 10 \
+    --threads 30 \
     --sort rate \
     --save /etc/pacman.d/mirrorlist; then
     echo -e "${GREEN}  ✓ Mirror list optimized for Americas (prioritizing Brazil)${NC}"

@@ -5,16 +5,27 @@
 - **Install Omarchy from bootable ISO.**
 - **Connect to Wi-Fi and update Omarchy / System.**
 - **Authenticate with GitHub and clone the repository:**  
-    gh auth login  
-    gh repo clone alkin/omarchy
+
+gh auth login  
+gh repo clone alkin/omarchy
+
 - **Run the custom setup script:**  
-    ./omarchy/custom/install.sh
+
+./omarchy/custom/install.sh
+
 - **Sign in to Google Chrome** and set up your default pages.
+
 - **Log in to cloud services:**  
-    gcloud auth login
-    az login
-    pulumi login
+
+gcloud auth login
+az login
+pulumi login
+
 - **Initialize and rename your Kubernetes contexts.**
+
+
+
+
 - **Sign in to Cursor; refresh your profile if needed.**
 - **Setup Work Projects Comunitive and Peepi.**
 
@@ -36,6 +47,21 @@ sail down
 cd frontend/tenant
 bun dev
 
+# Cloud
+cd cloud/app
+
+npm install
+
+pulumi stack select comunitive/production
+
+gcloud config set project comunitive-staging
+gcloud container clusters get-credentials comunitive-cluster --location us-east4
+kubectx comunitive-staging=gke_comunitive-staging_us-east4_comunitive-cluster
+
+gcloud config set project comunitive
+gcloud container clusters get-credentials comunitive-cluster --location us-east4
+kubectx comunitive-production=gke_comunitive_us-east4_comunitive-cluster
+
 # Deploy
 cd cloud/app
 pulumi whoami
@@ -43,6 +69,7 @@ k get po
 
 pulumi up
 k rollout restart deployment -l app=comunitive
+k rollout status deployment -l app=comunitive
 ```
 
 ## Peepi
@@ -62,6 +89,10 @@ peepi down
 cd vite
 bun dev
 
+# Cloud
+az aks get-credentials -a -n peepi-production -g peepi-production
+kubectx peepi-production=peepi-production-admin
+
 # Deploy
 az account show
 peepi secrets download production
@@ -72,9 +103,12 @@ peepi tinker
 # TODO
 
 - ~~Tema do omarchy nao se aplicando ao sistema - chrome warm~~ ✅ Resolvido (ver `custom/THEME_SYSTEM_ANALYSIS.md`)
-- ~~az login~~ ✅ Resolvido (ver `custom/bin/az` - wrapper que corrige problema de Python path)
 - zsh plugins nao abrindo nas janelas iniciais
 - k8s context
+- az login
+- peepi az - secrets - deploy
+- comunitive - pulumi - secrets - deploy - k8s
+- cursor profile
 
 # Aprender
 

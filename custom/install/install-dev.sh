@@ -58,7 +58,7 @@ echo -e "${GREEN}  ✓ PHP and Composer installed${NC}\n"
 
 # Cloud CLIs
 echo -e "${YELLOW}☁️  Installing Cloud CLIs...${NC}"
-yay -S --noconfirm --needed azure-cli google-cloud-cli pulumi
+yay -S --noconfirm --needed azure-cli google-cloud-cli google-cloud-cli-component-gke-gcloud-auth-plugin pulumi
 echo -e "${GREEN}  ✓ Cloud CLIs installed${NC}\n"
 
 # Kubernetes tools
