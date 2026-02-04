@@ -102,12 +102,7 @@ peepi tinker
 
 # TODO
 
-- ~~Tema do omarchy nao se aplicando ao sistema - chrome warm~~ ✅ Resolvido (ver `custom/THEME_SYSTEM_ANALYSIS.md`)
 - zsh plugins nao abrindo nas janelas iniciais
-- k8s context
-- az login
-- peepi az - secrets - deploy
-- comunitive - pulumi - secrets - deploy - k8s
 - cursor profile
 
 # Aprender
