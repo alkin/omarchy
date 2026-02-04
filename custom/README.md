@@ -1,33 +1,33 @@
 # README
 
-## Quick Start Setup
+```bash
+# Install Omarchy from bootable ISO.
 
-- **Install Omarchy from bootable ISO.**
-- **Connect to Wi-Fi and update Omarchy / System.**
-- **Authenticate with GitHub and clone the repository:**  
+# Connect to Wi-Fi and update Omarchy / System.
 
-gh auth login  
+# Authenticate with GitHub and clone the repository:
+
+gh auth login
 gh repo clone alkin/omarchy
 
-- **Run the custom setup script:**  
+# Run the custom setup script:
 
 ./omarchy/custom/install.sh
 
-- **Sign in to Google Chrome** and set up your default pages.
+# Sign in to Google Chrome and set up your default pages.
 
-- **Log in to cloud services:**  
+# Sign in to Cursor; refresh your profile if needed.
+
+# Sign in to OpenCode
+
+# Log in to cloud services:
 
 gcloud auth login
 az login
 pulumi login
 
-- **Initialize and rename your Kubernetes contexts.**
-
-
-
-
-- **Sign in to Cursor; refresh your profile if needed.**
-- **Setup Work Projects Comunitive and Peepi.**
+# Setup Work Projects Comunitive and Peepi.
+```
 
 # Work
 
@@ -104,6 +104,8 @@ peepi tinker
 
 - zsh plugins nao abrindo nas janelas iniciais
 - cursor profile
+- opencode
+- test deploy
 
 # Aprender
 
