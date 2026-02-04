@@ -40,7 +40,20 @@ echo -e "${YELLOW}📦 Installing PHP and Composer...${NC}"
 # Update pacman database to ensure keys are up to date
 sudo pacman -Sy 2>/dev/null || true
 omarchy-install-dev-env php
-yay -S --noconfirm --needed php-gd php-sodium
+
+yay -S --noconfirm --needed php-gd php-sodium svt-av1
+
+# Enable some extensions
+local php_ini_path="/etc/php/php.ini"
+local extensions_to_enable=(
+"gd"
+"sodium"
+)
+
+for ext in "${extensions_to_enable[@]}"; do
+sudo sed -i "s/^;extension=${ext}/extension=${ext}/" "$php_ini_path"
+done
+
 echo -e "${GREEN}  ✓ PHP and Composer installed${NC}\n"
 
 # Cloud CLIs

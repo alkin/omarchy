@@ -16,6 +16,7 @@ echo -e "${BLUE}Installing Dictation (Voxtype) with PT-BR support...${NC}\n"
 
 # Install voxtype packages
 echo -e "${YELLOW}📦 Installing Voxtype packages...${NC}"
+yay -S --noconfirm --needed vulkan-icd-loader vulkan-radeon lib32-vulkan-radeon lib32-vulkan-icd-loader
 omarchy-pkg-add wtype voxtype-bin
 echo -e "${GREEN}  ✓ Voxtype packages installed${NC}\n"
 

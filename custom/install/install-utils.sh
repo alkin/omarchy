@@ -19,6 +19,7 @@ PACKAGES=(
     "dell-command-configure"
     "bind"
     "jq"
+    "amdgpu_top"
 )
 
 # System utilities

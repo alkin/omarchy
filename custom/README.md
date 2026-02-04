@@ -71,6 +71,11 @@ peepi tinker
 
 # TODO
 
+- ~~Tema do omarchy nao se aplicando ao sistema - chrome warm~~ ✅ Resolvido (ver `custom/THEME_SYSTEM_ANALYSIS.md`)
+- ~~az login~~ ✅ Resolvido (ver `custom/bin/az` - wrapper que corrige problema de Python path)
+- zsh plugins nao abrindo nas janelas iniciais
+- k8s context
+
 # Aprender
 
 - zsh plugins and usage review
@@ -98,6 +103,7 @@ peepi tinker
 - Cursor
     - Keybindings
     - Profile, Extensions, Keybindings
+    - Theme sync: Configurado para recarregar automaticamente após mudança de tema (ver `custom/config/config-theme-cursor.sh`)
 - Terminal
     - Keybindings
     - Ghostty, zsh, prompt, aliases
